@@ -32,7 +32,7 @@ public class Deck {
      * and remove it from the deck linked list and add it to the players hand
      * @return new Card element from the deck
      */
-    public Card Draw() {
+    public Card draw() {
         return new Number("",0);
     }
 

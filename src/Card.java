@@ -29,10 +29,12 @@ public abstract class Card {
 
     }
 
+    /***
+     * Controls turn increments and hand manipulation when a given card is played.
+     * @param game
+     */
     public abstract void play(Game game);
 
-    // Queue DrawPile
-    // Stack Discard
     /***
      * Checks if card and other are the same color or at least one color is "None".
      * @param other
