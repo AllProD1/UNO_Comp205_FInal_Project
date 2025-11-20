@@ -31,7 +31,7 @@ public class Deck {
      * @return new Card element from the deck
      */
     public Card Draw() {
-        return new Card();
+        return new Number("",0);
     }
 
 }

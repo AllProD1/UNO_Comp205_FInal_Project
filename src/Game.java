@@ -19,6 +19,14 @@ public class Game {
     // for reverse card and skip cards
     private int turnIncrement;
 
+
+    /**
+     * Start Game creates the players and shuffles the deck. Then seven cards are
+     * dealt into the players hands one after another. It also flips the top card
+     * of the deck and checks to see if it is a valid start card for the game.
+     */
+    public void StartGame(){}
+
     /***
      * dealCard will take card elements and enter them into a players hand
      * depending on the required numToDraw reasoning to an action dealing
