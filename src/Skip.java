@@ -16,8 +16,7 @@ public class Skip extends Card {
      * advancing to the new players turn
      * @return
      */
-    public int play(){
-        return 2;
+    public void play(Game game){
     }
 
     /**
