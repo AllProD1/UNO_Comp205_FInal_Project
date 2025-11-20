@@ -1,4 +1,6 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Stack;
 
 /**
  * Game
@@ -11,7 +13,10 @@ public class Game {
     // is an object reference to the linked list for the cards in the drawing or dealing deck
     private Deck gameDeck;
     // is an object to reference the linked list for the card objects being discarded
-    private Deck discardPile;
+    private Stack<Card> discardPile;
+
+    // All player's hands.
+    private ArrayList<Card>[] hands;
 
     // int to keep track of which players turn it is
     private int currPlayer;
@@ -78,9 +83,5 @@ public class Game {
      */
     public boolean canDrawFour(ArrayList<Card> hand) {
         return false;
-    }
-
-    public static void main(String[] args) {
-        System.out.println("UNO");
     }
 }

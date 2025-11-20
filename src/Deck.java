@@ -1,4 +1,5 @@
 import java.util.LinkedList;
+import java.util.Queue;
 
 /***
  *Deck
@@ -14,7 +15,8 @@ public class Deck {
      * and it can be drawn from by players
      * LinkedList was chosen for its speed when shuffling
      */
-    private LinkedList<Card> deck;
+    // Linked List
+    private Queue<Card> deck;
 
     /***
      *Shuffle method will take the card elements in the linked list

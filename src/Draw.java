@@ -29,6 +29,14 @@ public class Draw extends Card{
     }
 
     /***
+     * Makes the next player draw drawAmount cards and skips their turn.
+     * @param game
+     */
+    public void play(Game game) {
+        return;
+    }
+
+    /***
      * Checks if card and other are the same color or at least one color is "None" or the drawAmount is the same.
      * @param other
      * @return true if this Card and other are deemed equal and false if otherwise.

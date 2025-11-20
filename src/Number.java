@@ -21,6 +21,14 @@ public class Number extends Card{
     }
 
     /***
+     * Moves to next players turn.
+     * @param game
+     */
+    public void play(Game game) {
+        return;
+    }
+
+    /***
      * Checks if card and other are the same color or at least one color is "None" or the numbers are the same.
      * @param other
      * @return true if this Card and other are deemed equal and false if otherwise.

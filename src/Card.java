@@ -29,6 +29,10 @@ public abstract class Card {
 
     }
 
+    public abstract void play(Game game);
+
+    // Queue DrawPile
+    // Stack Discard
     /***
      * Checks if card and other are the same color or at least one color is "None".
      * @param other
