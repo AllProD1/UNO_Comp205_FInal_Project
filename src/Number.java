@@ -1,3 +1,6 @@
+/***
+ * Class for number all basic number cards.
+ */
 public class Number extends Card{
 
     // The number value of the card.

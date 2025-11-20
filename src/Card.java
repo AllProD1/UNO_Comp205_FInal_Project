@@ -1,3 +1,6 @@
+/***
+ * Abstract Parent class for all cards that holds color and basic comparing methods.
+ */
 public abstract class Card {
 
     // The color of the card. "None" if the card is colorless.

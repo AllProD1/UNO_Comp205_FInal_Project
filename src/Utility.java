@@ -1,3 +1,6 @@
+/***
+ * Class for utility cards that don't cause draws such as skip, reverse, and wilds.
+ */
 public class Utility extends Card{
 
     // The name of the utility card. (i.e. Reverse, Skip, Wild).

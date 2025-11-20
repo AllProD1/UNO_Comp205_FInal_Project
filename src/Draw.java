@@ -1,3 +1,6 @@
+/***
+ * Class for all draw cards such draw 2 and draw 4.
+ */
 public class Draw extends Card{
 
     // The number of cards other players will draw when this card is played.
