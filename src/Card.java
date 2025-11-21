@@ -10,6 +10,7 @@ public abstract class Card {
      * Creates a new Card with this.color set to "None".
      */
     public Card() {
+        this.color = "None";
     }
 
     /***
@@ -17,16 +18,17 @@ public abstract class Card {
      * @param color
      */
     public Card(String color) {
+        this.color = color;
     }
 
     // Gets Color.
     public String getColor() {
-        return "";
+        return color;
     }
 
     // Sets this.Color to newColor.
     public void setColor(String newColor) {
-
+        this.color = newColor;
     }
 
     /***
@@ -41,6 +43,13 @@ public abstract class Card {
      * @return true if this Card and other are deemed equal and false if otherwise.
      */
     public boolean softEquals(Card other) {
-        return true;
+
+        if (other.getColor().equals("None")) {
+            return true;
+        } else if(color.equals(other.getColor())) {
+            return true;
+        }
+
+        return false;
     }
 }
