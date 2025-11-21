@@ -36,6 +36,12 @@ public class Draw extends Card{
      * @param game
      */
     public void play(Game game) {
+
+        // If Draw 4 Card is played set it to a color.
+        if (drawAmount == 4) {
+            super.setColor(game.getUserColor());
+        }
+
         // Switch to next player.
         game.changeCurrPlayer(1 * game.getTurnDirection());
         // Deal next player drawAmount cards.

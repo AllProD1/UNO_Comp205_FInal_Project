@@ -1,5 +1,7 @@
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Locale;
+import java.util.Scanner;
 import java.util.Stack;
 
 /**
@@ -66,6 +68,35 @@ public class Game {
      */
     public void dealCard(int numToDraw, ArrayList<Card> hand) {
         return;
+    }
+
+    public String getUserColor() {
+        // Sets up options for colors.
+        ArrayList<String> OPTIONS = new ArrayList<String>() {
+            {
+                add("red");
+                add("r");
+                add("blue");
+                add("b");
+                add("yellow");
+                add("y");
+                add("green");
+                add("g");
+            }
+        };
+
+        Scanner userInput = new Scanner(System.in);
+
+        String color = "";
+
+        // Gets user input until a proper color is entered.
+        do {
+            System.out.println("Enter a color (Red, Blue, Yellow, Green, R, B, Y, G): ");
+            color = userInput.nextLine().toLowerCase();
+        }
+        while (!OPTIONS.contains(color));
+
+        return color;
     }
 
     /***

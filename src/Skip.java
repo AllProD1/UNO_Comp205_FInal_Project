@@ -22,5 +22,6 @@ public class Skip extends Card {
      * @return
      */
     public void play(Game game){
+        // Change player by 2.
     }
 }

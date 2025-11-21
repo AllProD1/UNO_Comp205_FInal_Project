@@ -21,6 +21,8 @@ public class Reverse extends Card {
      * @param game
      */
     public void play(Game game) {
+        // Change turnDirection and change player.
+        // If there are only 2 players do nothing.
         return;
     }
 }

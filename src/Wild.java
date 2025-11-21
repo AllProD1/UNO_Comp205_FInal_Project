@@ -18,6 +18,8 @@ public class Wild extends Card{
      */
     @Override
     public void play(Game game) {
+
+        // Use Game.getUserColor to change the color and move to next turn.
         return;
     }
 }
