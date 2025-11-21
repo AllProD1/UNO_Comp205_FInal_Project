@@ -20,9 +20,31 @@ public class Game {
 
     // int to keep track of which players turn it is
     private int currPlayer;
-    // int to count the turns of the round and used to increment direction
-    // for reverse card and skip cards
-    private int turnIncrement;
+
+    // The direction the game moves. Only 1 or -1.
+    private int turnDirection;
+
+    // Returns turnDirection
+    public int getTurnDirection() {
+        return turnDirection;
+    }
+
+    // Flips the direction of play.
+    public void changeTurnDirection() {
+        this.turnDirection *= -1;
+    }
+
+    /***
+     * Sets the current player to whoever is amount away.
+     * @param amount
+     */
+    public void changeCurrPlayer(int amount) {
+        currPlayer = currPlayer + amount % hands.length;
+    }
+
+    public int getCurrPlayer() {
+        return currPlayer;
+    }
 
 
     /**
@@ -43,6 +65,22 @@ public class Game {
      * @param hand is the arraylist of cards that a player has
      */
     public void dealCard(int numToDraw, ArrayList<Card> hand) {
+        return;
+    }
+
+    /***
+     * dealCard will take card elements and enter them into a players hand
+     * depending on the required numToDraw reasoning to an action dealing
+     * or drawing
+     *
+     * Deals to currPlayer
+     *
+     * @param numToDraw is defined by the reason for picking up cards
+     *                  that will be seven at the start of the game
+     *                  two or four depend on the draw card or
+     *                  one card if you cannot play on a turn
+     */
+    public void dealCard(int numToDraw) {
         return;
     }
 

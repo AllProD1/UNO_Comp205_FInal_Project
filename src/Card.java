@@ -26,6 +26,8 @@ public abstract class Card {
         return color;
     }
 
+    public abstract String getValue();
+
     // Sets this.Color to newColor.
     public void setColor(String newColor) {
         this.color = newColor;
@@ -47,6 +49,8 @@ public abstract class Card {
         if (other.getColor().equals("None")) {
             return true;
         } else if(color.equals(other.getColor())) {
+            return true;
+        } else if (getValue().equals(other.getValue())) {
             return true;
         }
 

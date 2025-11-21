@@ -11,21 +11,16 @@ public class Skip extends Card {
         super();
     }
 
+    @Override
+    public String getValue() {
+        return "Skip";
+    }
+
     /**
      * play uses two to increment the turn skipping the following player
      * advancing to the new players turn
      * @return
      */
     public void play(Game game){
-    }
-
-    /**
-     * Checks if card and other are the same color or at least one color is "None" or the numbers are the same.
-     * @param other
-     * @return true if this Card and other are deemed equal and false if otherwise.
-     */
-    @Override
-    public boolean softEquals(Card other) {
-        return true;
     }
 }

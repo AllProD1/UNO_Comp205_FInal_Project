@@ -11,21 +11,16 @@ public class Reverse extends Card {
         super();
     }
 
+    @Override
+    public String getValue() {
+        return "Reverse";
+    }
+
     /***
      * Reverses the turn order and does nothing if there are 2 players.
      * @param game
      */
     public void play(Game game) {
         return;
-    }
-
-    /***
-     * Checks if card and other are the same color or at least one color is "None" or other is a member of Reverse.
-     * @param other
-     * @return true if this Card and other are deemed equal and false if otherwise.
-     */
-    @Override
-    public boolean softEquals(Card other) {
-        return true;
     }
 }

@@ -33,7 +33,7 @@ public class Deck {
      * @return new Card element from the deck
      */
     public Card draw() {
-        return new Number("",0);
+        return new Number("","0");
     }
 
 }

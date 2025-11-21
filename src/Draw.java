@@ -12,6 +12,7 @@ public class Draw extends Card{
      */
     public Draw(int drawAmount) {
         super();
+        this.drawAmount = drawAmount;
     }
 
     /***
@@ -20,12 +21,14 @@ public class Draw extends Card{
      * @param drawAmount
      */
     public Draw(String color, int drawAmount) {
-        super();
+        super(color);
+        this.drawAmount = drawAmount;
     }
 
     // Gets drawAmount.
-    public int getDrawAmount() {
-        return 0;
+    @Override
+    public String getValue() {
+        return String.valueOf(drawAmount);
     }
 
     /***
@@ -33,16 +36,12 @@ public class Draw extends Card{
      * @param game
      */
     public void play(Game game) {
-        return;
-    }
+        // Switch to next player.
+        game.changeCurrPlayer(1 * game.getTurnDirection());
+        // Deal next player drawAmount cards.
+        game.dealCard(drawAmount);
+        // Skip next players turn.
+        game.changeCurrPlayer(1 * game.getTurnDirection());
 
-    /***
-     * Checks if card and other are the same color or at least one color is "None" or the drawAmount is the same.
-     * @param other
-     * @return true if this Card and other are deemed equal and false if otherwise.
-     */
-    @Override
-    public boolean softEquals(Card other) {
-        return true;
     }
 }
