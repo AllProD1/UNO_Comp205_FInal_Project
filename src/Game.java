@@ -12,6 +12,9 @@ import java.util.Stack;
  */
 public class Game {
 
+    // scanner for amount of players
+    Scanner scnr = new Scanner(System.in);
+
     // is an object reference to the linked list for the cards in the drawing or dealing deck
     private Deck gameDeck;
     // is an object to reference the linked list for the card objects being discarded
@@ -48,13 +51,37 @@ public class Game {
         return currPlayer;
     }
 
+    public int getPlayerCount(){return hands.length;}
 
     /**
      * Start Game creates the players and shuffles the deck. Then seven cards are
      * dealt into the players hands one after another. It also flips the top card
      * of the deck and checks to see if it is a valid start card for the game.
      */
-    public void StartGame(){}
+
+
+
+
+    // method can be used to make the arraylist for player hands
+    public int getPlayerNumber(){
+        System.out.println("How many real players (number like 1) ");
+        return scnr.nextInt();
+    }
+
+
+    public void StartGame(){
+        Game game = new Game();
+        getPlayerNumber();
+
+
+
+        dealCard(7);// to start game
+
+        // removes first card if not valid
+        if(!isValid(gameDeck.first())){
+            discard();
+        }
+    }
 
     /***
      * dealCard will take card elements and enter them into a players hand
@@ -67,7 +94,9 @@ public class Game {
      * @param hand is the arraylist of cards that a player has
      */
     public void dealCard(int numToDraw, ArrayList<Card> hand) {
-        return;
+        for(int i = 1; i <= numToDraw;i++){
+            hand.add(gameDeck.draw());
+        }
     }
 
     public String getUserColor() {
@@ -87,7 +116,7 @@ public class Game {
 
         Scanner userInput = new Scanner(System.in);
 
-        String color = "";
+        String color = userInput.next();// added this
 
         // Gets user input until a proper color is entered.
         do {
@@ -112,15 +141,21 @@ public class Game {
      *                  one card if you cannot play on a turn
      */
     public void dealCard(int numToDraw) {
-        return;
-    }
+        int handCount = numToDraw;
+        while(handCount <=numToDraw) {
+            hand.add(gameDeck.draw());
+            handCount++;
+        }
+    }// we may not need this method
 
     /***
      * discard is the act of playing by a player removing the card from
      * their hand and adding it to the discard pile
      */
     public void discard() {
-        return;
+
+       Card cardToDiscard = hand.removeFirst();
+       discardPile.add(cardToDiscard);
     }
 
     /***

@@ -8,7 +8,7 @@ public class Skip extends Card {
      * @param color
      */
     public Skip(String color){
-        super();
+        super(color);
     }
 
     @Override
@@ -23,5 +23,6 @@ public class Skip extends Card {
      */
     public void play(Game game){
         // Change player by 2.
+        game.changeCurrPlayer(game.getTurnDirection()+1);
     }
 }

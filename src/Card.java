@@ -53,7 +53,6 @@ public abstract class Card {
         } else if (getValue().equals(other.getValue())) {
             return true;
         }
-
         return false;
     }
 }

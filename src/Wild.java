@@ -3,8 +3,8 @@ public class Wild extends Card{
     /***
      * Creates a new Wild Card with color "None"
      */
-    public Wild() {
-        super();
+    public Wild(String color) {
+        super(color);
     }
 
     @Override
@@ -18,8 +18,8 @@ public class Wild extends Card{
      */
     @Override
     public void play(Game game) {
-
-        // Use Game.getUserColor to change the color and move to next turn.
-        return;
+        super.setColor(game.getUserColor());
+        game.changeCurrPlayer(game.getTurnDirection());
+        // Use Game.getUserColor to change the color and move to next turn
     }
 }

@@ -27,6 +27,6 @@ public class Number extends Card{
      * @param game
      */
     public void play(Game game) {
-        game.changeCurrPlayer(1 * game.getTurnDirection());
+        game.changeCurrPlayer(game.getTurnDirection());
     }
 }

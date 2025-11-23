@@ -8,7 +8,7 @@ public class Reverse extends Card {
      * @param color
      */
     public Reverse(String color) {
-        super();
+        super(color);
     }
 
     @Override
@@ -23,6 +23,10 @@ public class Reverse extends Card {
     public void play(Game game) {
         // Change turnDirection and change player.
         // If there are only 2 players do nothing.
-        return;
+        if(game.getPlayerCount() <= 2){
+            game.changeCurrPlayer(1 + game.getTurnDirection());
+        }else {
+            game.changeTurnDirection();
+        }
     }
 }
