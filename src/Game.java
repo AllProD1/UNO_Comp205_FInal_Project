@@ -1,8 +1,4 @@
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Scanner;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Game
@@ -18,25 +14,28 @@ public class Game {
     private Stack<Card> discardPile;
 
     // All player's hands.
-    private ArrayList<Card>[] hands;
+    private LinkedList<Card>[] hands;
 
     // int to keep track of which players turn it is
     private int currPlayer;
 
     // The direction the game moves. Only 1 or -1.
-    private int turnDirection;
+    private int turnDirection = 1;
+
+    // Scanner for getting userinput in the game.
+    Scanner userInput = new Scanner(System.in);
 
     public Game(int numPlayers, int numRealPlayers) {
 
         // Creates array of hands numPlayers long.
-        hands = new ArrayList[numPlayers];
+        hands = new LinkedList[numPlayers];
 
         // Instantiates the discard pile.
         discardPile = new Stack<>();
 
         // Instantiates each hand in hands as an empty ArrayList<Card>.
         for (int i = 0; i < hands.length; i++) {
-            hands[i] = new ArrayList<>();
+            hands[i] = new LinkedList<>();
         }
 
         gameDeck = new Deck();
@@ -57,7 +56,7 @@ public class Game {
      * @param amount
      */
     public void changeCurrPlayer(int amount) {
-        currPlayer = currPlayer + amount % hands.length;
+        currPlayer = (currPlayer + amount) % hands.length;
     }
 
     public int getCurrPlayer() {
@@ -75,9 +74,7 @@ public class Game {
 
         gameDeck.shuffle();
 
-        System.out.println(gameDeck.toString());
-
-        for (ArrayList<Card> hand : hands) {
+        for (LinkedList<Card> hand : hands) {
             dealCard(7, hand);
         }
 
@@ -98,7 +95,7 @@ public class Game {
      *                  one card if you cannot play on a turn
      * @param hand is the arraylist of cards that a player has
      */
-    public void dealCard(int numToDraw, ArrayList<Card> hand) {
+    public void dealCard(int numToDraw, LinkedList<Card> hand) {
         for(int i = 1; i <= numToDraw;i++){
             hand.add(gameDeck.draw());
         }
@@ -118,8 +115,6 @@ public class Game {
                 add("g");
             }
         };
-
-        Scanner userInput = new Scanner(System.in);
 
         String color = userInput.next();// added this
 
@@ -146,20 +141,16 @@ public class Game {
      *                  one card if you cannot play on a turn
      */
     public void dealCard(int numToDraw) {
-        int handCount = numToDraw;
-        while(handCount <=numToDraw) {
-            hands[currPlayer].add(gameDeck.draw());
-            handCount++;
-        }
+        dealCard(numToDraw, hands[currPlayer]);
     }// we may not need this method
 
     /***
      * discard is the act of playing by a player removing the card from
      * their hand and adding it to the discard pile
      */
-    public void discard() {
+    public void discard(int index) {
 
-       Card cardToDiscard = hands[currPlayer].removeFirst();
+       Card cardToDiscard = hands[currPlayer].remove(index);
        discardPile.add(cardToDiscard);
     }
 
@@ -169,7 +160,38 @@ public class Game {
      * if the card draw is valid it plays adn advances to next players turn
      */
     public void playTurn() {
-        return;
+
+        LinkedList<Card> currHand = hands[currPlayer];
+
+        System.out.printf("\nPlayer %d's Hand:\n%s\n\n", currPlayer + 1, printHand(currHand));
+
+        System.out.print("Enter the card you want to play: ");
+        String requestedCard = userInput.nextLine().strip();
+        int requestedCardIndex = checkHandForCard(requestedCard, currHand);
+
+        while(requestedCardIndex == -1) {
+
+            System.out.print("Not a valid card. Try again: ");
+            requestedCard = userInput.nextLine();
+
+            requestedCardIndex = checkHandForCard(requestedCard, currHand);
+
+        }
+
+        currHand.get(requestedCardIndex).play(this);
+        discard(requestedCardIndex);
+
+    }
+
+    public String printHand(LinkedList<Card> hand) {
+        StringBuilder sb = new StringBuilder();
+
+        for (Card c : hand) {
+            sb.append(c.toString().replace("None ", ""));
+            sb.append("\n");
+        }
+
+        return sb.toString();
     }
 
     /***
@@ -197,5 +219,29 @@ public class Game {
             }
         }
         return true;
+    }
+
+    /***
+     * Finds if any the first matching Card in Hand with card.
+     * @param card
+     * @param hand
+     * @return Returns the index of the Card in hand with to same toString as card. Return -1 otherwise.
+     */
+    public int checkHandForCard(String card, LinkedList<Card> hand) {
+        for (int i = 0; i < hand.size(); i++) {
+
+            String cardString = hand.get(i).toString();
+
+            // Remove None Color.
+            cardString.replace("None ", "");
+
+            // Remove Excess Spacing.
+            cardString.strip();
+
+            if (card.equalsIgnoreCase(cardString)) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

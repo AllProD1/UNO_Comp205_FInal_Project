@@ -44,5 +44,9 @@ public class Uno {
 
         Game uno = new Game(numRealPlayers + numBots, numRealPlayers);
         uno.StartGame();
+
+        for (int i = 0; i < 10; i++) {
+            uno.playTurn();
+        }
     }
 }
