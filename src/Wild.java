@@ -3,8 +3,8 @@ public class Wild extends Card{
     /***
      * Creates a new Wild Card with color "None"
      */
-    public Wild(String color) {
-        super(color);
+    public Wild() {
+        super("None");
     }
 
     @Override

@@ -23,6 +23,6 @@ public class Skip extends Card {
      */
     public void play(Game game){
         // Change player by 2.
-        game.changeCurrPlayer(game.getTurnDirection()+1);
+        game.changeCurrPlayer(2 * game.getTurnDirection());
     }
 }

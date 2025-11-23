@@ -23,8 +23,8 @@ public class Reverse extends Card {
     public void play(Game game) {
         // Change turnDirection and change player.
         // If there are only 2 players do nothing.
-        if(game.getPlayerCount() <= 2){
-            game.changeCurrPlayer(1 + game.getTurnDirection());
+        if(game.getPlayerCount() > 2){
+            game.changeCurrPlayer(game.getTurnDirection());
         }else {
             game.changeTurnDirection();
         }

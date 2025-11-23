@@ -55,4 +55,9 @@ public abstract class Card {
         }
         return false;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s", color, getValue());
+    }
 }

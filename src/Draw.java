@@ -28,7 +28,7 @@ public class Draw extends Card{
     // Gets drawAmount.
     @Override
     public String getValue() {
-        return String.valueOf(drawAmount);
+        return String.format("+%d",drawAmount);
     }
 
     /***
@@ -43,11 +43,11 @@ public class Draw extends Card{
         }
 
         // Switch to next player.
-        game.changeCurrPlayer(1 * game.getTurnDirection());
+        game.changeCurrPlayer(game.getTurnDirection());
         // Deal next player drawAmount cards.
         game.dealCard(drawAmount);
         // Skip next players turn.
-        game.changeCurrPlayer(1 * game.getTurnDirection());
+        game.changeCurrPlayer(game.getTurnDirection());
 
     }
 }

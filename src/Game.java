@@ -12,9 +12,6 @@ import java.util.Stack;
  */
 public class Game {
 
-    // scanner for amount of players
-    Scanner scnr = new Scanner(System.in);
-
     // is an object reference to the linked list for the cards in the drawing or dealing deck
     private Deck gameDeck;
     // is an object to reference the linked list for the card objects being discarded
@@ -28,6 +25,22 @@ public class Game {
 
     // The direction the game moves. Only 1 or -1.
     private int turnDirection;
+
+    public Game(int numPlayers, int numRealPlayers) {
+
+        // Creates array of hands numPlayers long.
+        hands = new ArrayList[numPlayers];
+
+        // Instantiates the discard pile.
+        discardPile = new Stack<>();
+
+        // Instantiates each hand in hands as an empty ArrayList<Card>.
+        for (int i = 0; i < hands.length; i++) {
+            hands[i] = new ArrayList<>();
+        }
+
+        gameDeck = new Deck();
+    }
 
     // Returns turnDirection
     public int getTurnDirection() {
@@ -58,29 +71,21 @@ public class Game {
      * dealt into the players hands one after another. It also flips the top card
      * of the deck and checks to see if it is a valid start card for the game.
      */
-
-
-
-
-    // method can be used to make the arraylist for player hands
-    public int getPlayerNumber(){
-        System.out.println("How many real players (number like 1) ");
-        return scnr.nextInt();
-    }
-
-
     public void StartGame(){
-        Game game = new Game();
-        getPlayerNumber();
 
+        gameDeck.shuffle();
 
+        System.out.println(gameDeck.toString());
 
-        dealCard(7);// to start game
-
-        // removes first card if not valid
-        if(!isValid(gameDeck.first())){
-            discard();
+        for (ArrayList<Card> hand : hands) {
+            dealCard(7, hand);
         }
+
+        do {
+            discardPile.add(gameDeck.draw());
+        } while(!isValid(discardPile.peek()));
+
+        currPlayer = 0;
     }
 
     /***
@@ -143,7 +148,7 @@ public class Game {
     public void dealCard(int numToDraw) {
         int handCount = numToDraw;
         while(handCount <=numToDraw) {
-            hand.add(gameDeck.draw());
+            hands[currPlayer].add(gameDeck.draw());
             handCount++;
         }
     }// we may not need this method
@@ -154,7 +159,7 @@ public class Game {
      */
     public void discard() {
 
-       Card cardToDiscard = hand.removeFirst();
+       Card cardToDiscard = hands[currPlayer].removeFirst();
        discardPile.add(cardToDiscard);
     }
 
@@ -176,7 +181,7 @@ public class Game {
      * @return true or false if the card can be played on the discard pile
      */
     public boolean isValid(Card card) {
-        return false;
+        return card instanceof Number;
     }
 
     /***
@@ -186,6 +191,11 @@ public class Game {
      * @return true when you have no other valid plays and false when a card plays
      */
     public boolean canDrawFour(ArrayList<Card> hand) {
-        return false;
+        for (Card c : hand) {
+            if (c.getValue().equals("+4") && c.softEquals(discardPile.peek())) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -16,7 +17,7 @@ public class Deck {
      * LinkedList was chosen for its speed when shuffling
      */
     // Linked List
-    private LinkedList<Card> deck;
+    private Queue<Card> deck = new LinkedList<>();
 
     /**
      * added this to fill the deck im not sure we had a place to
@@ -24,45 +25,38 @@ public class Deck {
      * as a linked list for now i also know i could clean it up with strings they
      * are a bit repetitive but ill fix it later
      */
-    public void deckBuilder(){
-       LinkedList<Card> deck = new LinkedList<>();
+    public Deck(){
 
-       for(int i = 1; i <= 9; i++) {
-           int twoOfEach = 1;
-           while(twoOfEach <= 2) {
-               // creates two number objects
-               deck.add(new Number("Red", Integer.toString(i)));
-               deck.add(new Number("Blue", Integer.toString(i)));
-               deck.add(new Number("Yellow", Integer.toString(i)));
-               deck.add(new Number("Green", Integer.toString(i)));
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 10-i; j++) {
+                deck.add(new Number("Red", Integer.toString(j+i)));
+                deck.add(new Number("Blue", Integer.toString(j+i)));
+                deck.add(new Number("Yellow", Integer.toString(j+i)));
+                deck.add(new Number("Green", Integer.toString(j+i)));
+            }
 
-               // creates two skip objects
-               deck.add(new Skip("Red"));
-               deck.add(new Skip("Blue"));
-               deck.add(new Skip("Yellow"));
-               deck.add(new Skip("Green"));
+            // creates two skip cards
+            deck.add(new Skip("Red"));
+            deck.add(new Skip("Blue"));
+            deck.add(new Skip("Yellow"));
+            deck.add(new Skip("Green"));
 
-               // creates two reverse cards
-               deck.add(new Reverse("Red"));
-               deck.add(new Reverse("Blue"));
-               deck.add(new Reverse("Yellow"));
-               deck.add(new Reverse("Green"));
+            // creates two reverse cards
+            deck.add(new Reverse("Red"));
+            deck.add(new Reverse("Blue"));
+            deck.add(new Reverse("Yellow"));
+            deck.add(new Reverse("Green"));
 
-               // creates two draw two cards
-               deck.add(new Draw("Red",2));
-               deck.add(new Draw("Blue",2));
-               deck.add(new Draw("Yellow",2));
-               deck.add(new Draw("Green",2));
+            // creates two draw two cards
+            deck.add(new Draw("Red",2));
+            deck.add(new Draw("Blue",2));
+            deck.add(new Draw("Yellow",2));
+            deck.add(new Draw("Green",2));
 
-               twoOfEach++;
-           }
-           // creates wild cards
-           int wildcounter = 1;
-           while(wildcounter <= 4) {
-               deck.add(new Wild("None"));
-               deck.add(new Draw("None",4));
-               wildcounter++;
-           }
+            for (int j = 0; j < 2; j++) {
+                deck.add(new Wild());
+                deck.add(new Draw(4));
+            }
         }
     }
 
@@ -74,7 +68,15 @@ public class Deck {
      * the new deck
      */
     public void shuffle() {
+        ArrayList<Card> listDeck = new ArrayList<>(deck);
+        for (int i = 0; i < listDeck.size(); i++) {
+            Card temp = listDeck.get(i);
+            int random = (int) (Math.random() * listDeck.size());
+            listDeck.set(i, listDeck.get(random));
+            listDeck.set(random, temp);
+        }
 
+        deck = new LinkedList<>(listDeck);
     }
 
     /***
@@ -84,8 +86,8 @@ public class Deck {
      */
     public Card draw() {
         // should remove the card from the deck than return it
-        Card draw = deck.getFirst();
-        deck.removeFirst();
+        Card draw = deck.peek();
+        deck.poll();
         return draw;
     }
 
@@ -94,6 +96,18 @@ public class Deck {
      * @return first Card object from draw pile
      */
     public Card first(){
-        return deck.getFirst();
+        return deck.peek();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        for (Card card : deck) {
+            sb.append(card.toString());
+            sb.append("\n");
+        }
+
+        return sb.toString();
     }
 }
