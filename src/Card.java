@@ -48,9 +48,9 @@ public abstract class Card {
 
         if (other.getColor().equals("None")) {
             return true;
-        } else if(color.equals(other.getColor())) {
+        } else if(color.equalsIgnoreCase(other.getColor())) {
             return true;
-        } else if (getValue().equals(other.getValue())) {
+        } else if (getValue().equalsIgnoreCase(other.getValue())) {
             return true;
         }
         return false;
@@ -60,4 +60,6 @@ public abstract class Card {
     public String toString() {
         return String.format("%s %s", color, getValue());
     }
+
+    public abstract Card getCopy();
 }

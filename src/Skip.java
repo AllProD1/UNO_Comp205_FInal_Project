@@ -25,4 +25,8 @@ public class Skip extends Card {
         // Change player by 2.
         game.changeCurrPlayer(2 * game.getTurnDirection());
     }
+
+    public Card getCopy() {
+        return new Skip(getColor());
+    }
 }

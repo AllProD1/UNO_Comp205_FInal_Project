@@ -50,4 +50,12 @@ public class Draw extends Card{
         game.changeCurrPlayer(game.getTurnDirection());
 
     }
+
+    public Card getCopy() {
+        if (drawAmount == 4) { // Removes Color of draw four cards copied.
+            return new  Draw(drawAmount);
+        }
+
+        return new Draw(getColor(), drawAmount);
+    }
 }

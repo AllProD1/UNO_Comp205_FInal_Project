@@ -63,7 +63,7 @@ public class Game {
         return currPlayer;
     }
 
-    public int getPlayerCount(){return hands.length;}
+    public int getPlayerCount(){ return hands.length; }
 
     /**
      * Start Game creates the players and shuffles the deck. Then seven cards are
@@ -80,7 +80,7 @@ public class Game {
 
         do {
             discardPile.add(gameDeck.draw());
-        } while(!isValid(discardPile.peek()));
+        } while(!isValidStart(discardPile.peek()));
 
         currPlayer = 0;
     }
@@ -96,8 +96,28 @@ public class Game {
      * @param hand is the arraylist of cards that a player has
      */
     public void dealCard(int numToDraw, LinkedList<Card> hand) {
-        for(int i = 1; i <= numToDraw;i++){
-            hand.add(gameDeck.draw());
+
+        if (numToDraw > gameDeck.getDeckCount()) {
+
+            int numRemainToDraw = numToDraw - gameDeck.getDeckCount();
+
+            for(int i = 1; i <= gameDeck.getDeckCount();i++){
+                hand.add(gameDeck.draw());
+            }
+
+            Card lastCard = discardPile.pop();
+            gameDeck = new Deck(discardPile);
+            gameDeck.shuffle();
+
+            discardPile.add(lastCard);
+
+            for (int i = 0; i < numRemainToDraw; i++) {
+                hand.add(gameDeck.draw());
+            }
+        } else {
+            for (int i = 1; i <= numToDraw; i++) {
+                hand.add(gameDeck.draw());
+            }
         }
     }
 
@@ -116,7 +136,7 @@ public class Game {
             }
         };
 
-        String color = userInput.next();// added this
+        String color; // added this
 
         // Gets user input until a proper color is entered.
         do {
@@ -125,7 +145,12 @@ public class Game {
         }
         while (!OPTIONS.contains(color));
 
-        return color;
+        // Returns fully spelt out color.
+        if (color.length() > 1) {
+            return color;
+        }
+        return OPTIONS.get(OPTIONS.indexOf(color)-1);
+
     }
 
     /***
@@ -148,10 +173,11 @@ public class Game {
      * discard is the act of playing by a player removing the card from
      * their hand and adding it to the discard pile
      */
-    public void discard(int index) {
+    public Card discard(int index) {
 
        Card cardToDiscard = hands[currPlayer].remove(index);
        discardPile.add(cardToDiscard);
+       return cardToDiscard;
     }
 
     /***
@@ -160,26 +186,33 @@ public class Game {
      * if the card draw is valid it plays adn advances to next players turn
      */
     public void playTurn() {
+        System.out.printf("\nTop Card: %s\n", discardPile.peek());
 
         LinkedList<Card> currHand = hands[currPlayer];
 
         System.out.printf("\nPlayer %d's Hand:\n%s\n\n", currPlayer + 1, printHand(currHand));
 
-        System.out.print("Enter the card you want to play: ");
+        System.out.print("Enter the card you want to play or type draw: ");
         String requestedCard = userInput.nextLine().strip();
-        int requestedCardIndex = checkHandForCard(requestedCard, currHand);
 
-        while(requestedCardIndex == -1) {
+        if (requestedCard.equalsIgnoreCase("draw")) {
+            dealCard(1);
+            changeCurrPlayer(getTurnDirection());
+        } else {
+            // Currently does not check if a draw four card can be played.
+            int requestedCardIndex = checkHandForCard(requestedCard, currHand);
 
-            System.out.print("Not a valid card. Try again: ");
-            requestedCard = userInput.nextLine();
+            while (requestedCardIndex == -1 || !canBePlayed(currHand.get(requestedCardIndex), currHand)) {
 
-            requestedCardIndex = checkHandForCard(requestedCard, currHand);
+                System.out.print("Not a valid card. Try again: ");
+                requestedCard = userInput.nextLine();
 
+                requestedCardIndex = checkHandForCard(requestedCard, currHand);
+
+            }
+
+            discard(requestedCardIndex).play(this);
         }
-
-        currHand.get(requestedCardIndex).play(this);
-        discard(requestedCardIndex);
 
     }
 
@@ -195,15 +228,40 @@ public class Game {
     }
 
     /***
-     * isValid checks the current card on the discard pile and returns true or false
-     * if the card played is valid it plays on the discard pile and advances to the
-     * next players turn if the card is not a valid play the player is prompted to
-     * try to play another card from their hand or draw a card from the deck or draw pile
+     * Checks if the current card is a possible starting card. I.E. a number card.
      * @param card is the object in the players hand that is trying to be played
-     * @return true or false if the card can be played on the discard pile
+     * @return true or false if the card can be the starting card.
      */
-    public boolean isValid(Card card) {
+    public boolean isValidStart(Card card) {
         return card instanceof Number;
+    }
+
+    /***
+     * Checks the current card on the discard pile and returns true or false if they are compatible.
+     * @param card
+     * @return if the given card can be played on the discard pile.
+     */
+    public boolean canBePlayed(Card card, LinkedList<Card> hand) { // Can you play +4 with a wild in your hand?
+
+        // Checks if +4 card is the only viable option.
+        if (card.getValue().contains("+4")) {
+            if (canDrawFour(hand)) {
+                return true;
+            }
+            return false;
+        }
+
+        // Checks for Wild cards
+        if (card.getValue().contains("Wild")) {
+            return true;
+        }
+
+        // Handles all other cards.
+        if (card.softEquals(discardPile.peek())) {
+            return true;
+        }
+
+        return false;
     }
 
     /***
@@ -212,9 +270,10 @@ public class Game {
      * @param hand is the Arraylist of the players cards
      * @return true when you have no other valid plays and false when a card plays
      */
-    public boolean canDrawFour(ArrayList<Card> hand) {
+    public boolean canDrawFour(LinkedList<Card> hand) {
         for (Card c : hand) {
-            if (c.getValue().equals("+4") && c.softEquals(discardPile.peek())) {
+            // Checks if all non +4 cards match color to the last card discarded.
+            if (!c.getValue().equals("+4") && c.getColor().equalsIgnoreCase(discardPile.peek().getColor())) {
                 return false;
             }
         }
@@ -233,15 +292,25 @@ public class Game {
             String cardString = hand.get(i).toString();
 
             // Remove None Color.
-            cardString.replace("None ", "");
+            cardString = cardString.replace("None", "");
 
             // Remove Excess Spacing.
-            cardString.strip();
+            cardString = cardString.strip();
 
             if (card.equalsIgnoreCase(cardString)) {
                 return i;
             }
         }
+        return -1;
+    }
+
+    public int hasWon() {
+        for (int i = 0; i < hands.length; i++) {
+            if (hands[i].size() == 0) {
+                return i;
+            }
+        }
+
         return -1;
     }
 }

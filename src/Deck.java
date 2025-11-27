@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -60,6 +61,12 @@ public class Deck {
         }
     }
 
+    public Deck(Collection<Card> cardsToAdd) {
+        for (Card c : cardsToAdd) {
+            deck.add(c.getCopy());
+        }
+    }
+
     /***
      *Shuffle method will take the card elements in the linked list
      * and randomize there current order to deal the cards to the
@@ -90,6 +97,10 @@ public class Deck {
         deck.poll();
         return draw;
     }
+
+    public boolean isEmpty() { return deck.isEmpty(); }
+
+    public int getDeckCount() { return deck.size(); }
 
     /**
      * used to find first card when checking if valid

@@ -29,4 +29,8 @@ public class Number extends Card{
     public void play(Game game) {
         game.changeCurrPlayer(game.getTurnDirection());
     }
+
+    public Card getCopy() {
+        return new Number(getColor(), num);
+    }
 }

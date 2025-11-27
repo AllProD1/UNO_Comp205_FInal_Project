@@ -1,4 +1,3 @@
-import javax.sound.midi.Soundbank;
 import java.util.Scanner;
 
 public class Uno {
@@ -11,11 +10,11 @@ public class Uno {
         int numBots = -1;
 
         do {
-            System.out.print("How many REAL players do you want to play? (2-10): ");
+            System.out.print("How many REAL players do you want to play? (1-10): ");
             try {
                 numRealPlayers = Integer.parseInt(userInput.nextLine());
 
-                if (numRealPlayers < 2) {
+                if (numRealPlayers < 1) {
                     System.out.println("Number too small.");
                 } else if (numRealPlayers > 10) {
                     System.out.println("Number to big.");
@@ -24,7 +23,7 @@ public class Uno {
             } catch (NumberFormatException nfe) {
                 System.out.println("Not a valid number.");
             }
-        } while (numRealPlayers < 2 || numRealPlayers > 10);
+        } while (numRealPlayers < 1 || numRealPlayers > 10);
 
         do {
             System.out.printf("How many BOTS do you want to play? (0-%d): ", 10-numRealPlayers);
@@ -45,8 +44,13 @@ public class Uno {
         Game uno = new Game(numRealPlayers + numBots, numRealPlayers);
         uno.StartGame();
 
-        for (int i = 0; i < 10; i++) {
+        while(uno.hasWon() == -1) {
             uno.playTurn();
+            System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"); // Hides last players hand.
+            System.out.printf("Player %d's turn: Enter any key to view your hand.", uno.getCurrPlayer() + 1);
+            userInput.nextLine();
         }
+
+        System.out.printf("\n\nPlayer %d won!", uno.hasWon()+1);
     }
 }

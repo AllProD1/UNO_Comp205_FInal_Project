@@ -22,4 +22,8 @@ public class Wild extends Card{
         game.changeCurrPlayer(game.getTurnDirection());
         // Use Game.getUserColor to change the color and move to next turn
     }
+
+    public Card getCopy() {
+        return new Wild();
+    }
 }
