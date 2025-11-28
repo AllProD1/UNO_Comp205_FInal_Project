@@ -56,7 +56,7 @@ public class Game {
      * @param amount
      */
     public void changeCurrPlayer(int amount) {
-        currPlayer = (currPlayer + amount) % hands.length;
+        currPlayer = ((currPlayer + amount) % hands.length + hands.length) % hands.length;
     }
 
     public int getCurrPlayer() {
@@ -83,6 +83,8 @@ public class Game {
         } while(!isValidStart(discardPile.peek()));
 
         currPlayer = 0;
+
+        // User confirmation to start playing
     }
 
     /***
@@ -188,6 +190,10 @@ public class Game {
     public void playTurn() {
         System.out.printf("\nTop Card: %s\n", discardPile.peek());
 
+        if (currPlayer == -1) {
+            System.out.println("");
+        }
+
         LinkedList<Card> currHand = hands[currPlayer];
 
         System.out.printf("\nPlayer %d's Hand:\n%s\n\n", currPlayer + 1, printHand(currHand));
@@ -195,22 +201,20 @@ public class Game {
         System.out.print("Enter the card you want to play or type draw: ");
         String requestedCard = userInput.nextLine().strip();
 
+        int requestedCardIndex = checkHandForCard(requestedCard, currHand);
+
+        while (!requestedCard.equalsIgnoreCase("draw") && (requestedCardIndex == -1 || !canBePlayed(currHand.get(requestedCardIndex), currHand))) {
+
+            System.out.print("Not a valid card. Try again: ");
+            requestedCard = userInput.nextLine();
+
+            requestedCardIndex = checkHandForCard(requestedCard, currHand);
+        }
+
         if (requestedCard.equalsIgnoreCase("draw")) {
             dealCard(1);
             changeCurrPlayer(getTurnDirection());
         } else {
-            // Currently does not check if a draw four card can be played.
-            int requestedCardIndex = checkHandForCard(requestedCard, currHand);
-
-            while (requestedCardIndex == -1 || !canBePlayed(currHand.get(requestedCardIndex), currHand)) {
-
-                System.out.print("Not a valid card. Try again: ");
-                requestedCard = userInput.nextLine();
-
-                requestedCardIndex = checkHandForCard(requestedCard, currHand);
-
-            }
-
             discard(requestedCardIndex).play(this);
         }
 
