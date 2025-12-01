@@ -35,12 +35,14 @@ public class Uno {
                     System.out.println("Number too small.");
                 } else if (numBots > 10-numRealPlayers) {
                     System.out.println("Number to big.");
+                } else if (numRealPlayers == 1 && numBots == 0) {
+                    System.out.println("Need more players.");
                 }
 
             } catch (NumberFormatException nfe) {
                 System.out.println("Not a valid number.");
             }
-        } while (numBots < 0 || numBots > 10-numRealPlayers);
+        } while (numBots < 0 || numBots > 10-numRealPlayers || (numBots == 0 && numRealPlayers == 1));
 
         Game uno = new Game(numRealPlayers + numBots, numRealPlayers);
         uno.StartGame();
