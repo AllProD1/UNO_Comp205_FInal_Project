@@ -19,6 +19,8 @@ public class Game {
     // int to keep track of which players turn it is
     private int currPlayer;
 
+    private int botStart;
+
     // The direction the game moves. Only 1 or -1.
     private int turnDirection = 1;
 
@@ -37,6 +39,8 @@ public class Game {
         for (int i = 0; i < hands.length; i++) {
             hands[i] = new LinkedList<>();
         }
+
+        this.botStart = numRealPlayers;
 
         gameDeck = new Deck();
     }
@@ -188,36 +192,72 @@ public class Game {
      * if the card draw is valid it plays adn advances to next players turn
      */
     public void playTurn() {
-        System.out.printf("\nTop Card: %s\n", discardPile.peek());
 
-        if (currPlayer == -1) {
-            System.out.println("");
-        }
-
-        LinkedList<Card> currHand = hands[currPlayer];
-
-        System.out.printf("\nPlayer %d's Hand:\n%s\n\n", currPlayer + 1, printHand(currHand));
-
-        System.out.print("Enter the card you want to play or type draw: ");
-        String requestedCard = userInput.nextLine().strip();
-
-        int requestedCardIndex = checkHandForCard(requestedCard, currHand);
-
-        while (!requestedCard.equalsIgnoreCase("draw") && (requestedCardIndex == -1 || !canBePlayed(currHand.get(requestedCardIndex), currHand))) {
-
-            System.out.print("Not a valid card. Try again: ");
-            requestedCard = userInput.nextLine();
-
-            requestedCardIndex = checkHandForCard(requestedCard, currHand);
-        }
-
-        if (requestedCard.equalsIgnoreCase("draw")) {
-            dealCard(1);
-            changeCurrPlayer(getTurnDirection());
+        if (currPlayer >= botStart) {
+            botMove();
         } else {
-            discard(requestedCardIndex).play(this);
+
+            System.out.printf("\nTop Card: %s\n", discardPile.peek());
+
+            if (currPlayer == -1) {
+                System.out.println("");
+            }
+
+            LinkedList<Card> currHand = hands[currPlayer];
+
+            System.out.printf("\nPlayer %d's Hand:\n%s\n\n", currPlayer + 1, printHand(currHand));
+
+            System.out.print("Enter the card you want to play or type draw: ");
+            String requestedCard = userInput.nextLine().strip();
+
+            int requestedCardIndex = checkHandForCard(requestedCard, currHand);
+
+            while (!requestedCard.equalsIgnoreCase("draw") && (requestedCardIndex == -1 || !canBePlayed(currHand.get(requestedCardIndex), currHand))) {
+
+                System.out.print("Not a valid card. Try again: ");
+                requestedCard = userInput.nextLine();
+
+                requestedCardIndex = checkHandForCard(requestedCard, currHand);
+            }
+
+            if (requestedCard.equalsIgnoreCase("draw")) {
+                dealCard(1);
+                changeCurrPlayer(getTurnDirection());
+            } else {
+                discard(requestedCardIndex).play(this);
+            }
         }
 
+    }
+
+    public void botMove() {
+        ListIterator<Card> it = hands[currPlayer].listIterator();
+
+        while (it.hasNext()) {
+            Card c = it.next();
+            if (canBePlayed(c, hands[currPlayer])) {
+                if (c.getValue().equalsIgnoreCase("+4") || c.getValue().equalsIgnoreCase("Wild")) {
+                    c.setColor(getMostColor(hands[currPlayer]));
+                }
+                c.play(this);
+                discard(it.previousIndex());
+                return;
+            }
+        }
+        dealCard(1);
+    }
+
+    public String getMostColor(LinkedList<Card> hand) {
+        TreeMap<String, Integer> colors = new TreeMap<>();
+
+        for (Card c : hand) {
+            if (colors.containsKey(c.getColor())) {
+                colors.put(c.getColor(), colors.get(c.getColor())+1);
+            }
+            colors.put(c.getColor(), 1);
+        }
+
+        return colors.firstKey();
     }
 
     public String printHand(LinkedList<Card> hand) {

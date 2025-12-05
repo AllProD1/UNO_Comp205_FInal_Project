@@ -51,6 +51,15 @@ public class Draw extends Card{
 
     }
 
+    // Makes +4 Cards Appear as "Wild +4".
+    @Override public String toString() {
+        if (drawAmount == 4) {
+            return "Wild " + super.toString();
+        }
+        return super.toString();
+
+    }
+
     public Card getCopy() {
         if (drawAmount == 4) { // Removes Color of draw four cards copied.
             return new  Draw(drawAmount);

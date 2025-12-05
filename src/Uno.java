@@ -27,7 +27,7 @@ public class Uno {
         } while (numRealPlayers < 1 || numRealPlayers > 10);
 
         do {
-            System.out.printf("How many BOTS do you want to play? (0-%d): ", 10-numRealPlayers);
+            System.out.printf("How many BOTS do you want to play? (%d-%d): ", Math.max(0, 2-numRealPlayers), 10-numRealPlayers);
             try {
                 numBots = Integer.parseInt(userInput.nextLine());
 

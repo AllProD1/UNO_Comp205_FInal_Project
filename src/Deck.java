@@ -29,11 +29,14 @@ public class Deck {
     public Deck(){
 
         for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < 10-i; j++) {
-                deck.add(new Number("Red", Integer.toString(j+i)));
-                deck.add(new Number("Blue", Integer.toString(j+i)));
-                deck.add(new Number("Yellow", Integer.toString(j+i)));
-                deck.add(new Number("Green", Integer.toString(j+i)));
+
+            // Loops through 0-9 the first time.
+            // On the second loop loops 0-8 but adds 1 to each number making it 1-9.
+            for (int j = 0; j < 10 - i; j++) {
+                deck.add(new Number("Red", Integer.toString(j + i)));
+                deck.add(new Number("Blue", Integer.toString(j + i)));
+                deck.add(new Number("Yellow", Integer.toString(j + i)));
+                deck.add(new Number("Green", Integer.toString(j + i)));
             }
 
             // creates two skip cards
