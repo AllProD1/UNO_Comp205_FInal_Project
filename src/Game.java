@@ -27,7 +27,12 @@ public class Game {
     // Scanner for getting userinput in the game.
     Scanner userInput = new Scanner(System.in);
 
+    // used for reference in House Rules
+    int numPlayers,numRealPlayers;
+
     public Game(int numPlayers, int numRealPlayers) {
+        this.numPlayers = numPlayers;
+        this.numRealPlayers = numRealPlayers;
 
         // Creates array of hands numPlayers long.
         hands = new LinkedList[numPlayers];
@@ -43,6 +48,14 @@ public class Game {
         this.botStart = numRealPlayers;
 
         gameDeck = new Deck();
+    }
+
+    // getters for House Rules
+    public int getNumPlayers(){
+        return numPlayers;
+    }
+    public int getNumRealPlayers(){
+        return numRealPlayers;
     }
 
     // Returns turnDirection
@@ -66,6 +79,20 @@ public class Game {
     public int getCurrPlayer() {
         return currPlayer;
     }
+
+    // added for house rules
+    public int getBotStart(){
+        return botStart;
+    }
+
+    public Card getDiscardPile(){
+        return discardPile.peek();
+    }
+
+    public LinkedList<Card>[] getHands(){
+        return hands;
+    }
+
 
     public int getPlayerCount(){ return hands.length; }
 
@@ -207,7 +234,7 @@ public class Game {
 
             System.out.printf("\nPlayer %d's Hand:\n%s\n\n", currPlayer + 1, printHand(currHand));
 
-            System.out.print("Enter the card you want to play or type draw: ");
+            System.out.print("Enter the card you want to play by typing color and number or type draw: ");
             String requestedCard = userInput.nextLine().strip();
 
             int requestedCardIndex = checkHandForCard(requestedCard, currHand);
@@ -222,7 +249,11 @@ public class Game {
 
             if (requestedCard.equalsIgnoreCase("draw")) {
                 dealCard(1);
-                changeCurrPlayer(getTurnDirection());
+                if(canBePlayed(currHand.getLast(),currHand)){
+                    discard(currHand.size()-1).play(this);
+                }else {
+                    changeCurrPlayer(getTurnDirection());
+                }
             } else {
                 discard(requestedCardIndex).play(this);
             }
