@@ -110,7 +110,7 @@ public class Deck {
      * @return first Card object from draw pile
      */
     public Card first(){
-        return deck.peek();
+        return  deck.peek();
     }
 
     @Override

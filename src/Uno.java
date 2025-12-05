@@ -44,16 +44,45 @@ public class Uno {
             }
         } while (numBots < 0 || numBots > 10-numRealPlayers || (numBots == 0 && numRealPlayers == 1));
 
-        Game uno = new Game(numRealPlayers + numBots, numRealPlayers);
-        uno.StartGame();
 
-        while(uno.hasWon() == -1) {
-            uno.playTurn();
-            System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"); // Hides last players hand.
-            System.out.printf("Player %d's turn: Enter any key to view your hand.", uno.getCurrPlayer() + 1);
-            userInput.nextLine();
-        }
 
-        System.out.printf("\n\nPlayer %d won!", uno.hasWon()+1);
+            System.out.println("Enter Uno for regular rules and House for our house rules ");
+            String gameMode = userInput.nextLine();
+
+            // while loop to only get Uno or House as valid inputs from user
+            while(!gameMode.equalsIgnoreCase("Uno")&&!gameMode.equalsIgnoreCase("House")){
+                System.out.println("Try again ");
+                gameMode = userInput.nextLine();
+            }
+
+            // if else for creating uno game or house rules game
+            if(gameMode.equalsIgnoreCase("Uno")) {
+                Game uno = new Game(numRealPlayers + numBots, numRealPlayers);
+                uno.StartGame();
+
+                while (uno.hasWon() == -1) {
+                    uno.playTurn();
+                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"); // Hides last players hand.
+                    System.out.printf("Player %d's turn: Enter any key to view your hand.", uno.getCurrPlayer() + 1);
+                    userInput.nextLine();
+                }
+
+                System.out.printf("\n\nPlayer %d won!", uno.hasWon() + 1);
+
+            } else {
+                HouseRules customUno = new HouseRules(numRealPlayers + numBots, numRealPlayers);
+                customUno.StartGame();
+
+                while (customUno.hasWon() == -1) {
+                    customUno.playTurn();
+                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"); // Hides last players hand.
+                    System.out.printf("Player %d's turn: Enter any key to view your hand.", customUno.getCurrPlayer() + 1);
+                    userInput.nextLine();
+                }
+
+                System.out.printf("\n\nPlayer %d won!", customUno.hasWon() + 1);
+            }
+
+
     }
 }
