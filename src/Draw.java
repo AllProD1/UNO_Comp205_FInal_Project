@@ -38,7 +38,7 @@ public class Draw extends Card{
     public void play(Game game) {
 
         // If Draw 4 Card is played set it to a color.
-        if (drawAmount == 4) {
+        if (drawAmount == 4 && getColor().equalsIgnoreCase("None")) {
             super.setColor(game.getUserColor());
         }
 
@@ -53,7 +53,7 @@ public class Draw extends Card{
 
     // Makes +4 Cards Appear as "Wild +4".
     @Override public String toString() {
-        if (drawAmount == 4) {
+        if (drawAmount == 4 && getColor().equalsIgnoreCase("None")) {
             return "Wild " + super.toString();
         }
         return super.toString();

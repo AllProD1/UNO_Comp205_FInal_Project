@@ -214,7 +214,11 @@ public class Game {
 
             while (!requestedCard.equalsIgnoreCase("draw") && (requestedCardIndex == -1 || !canBePlayed(currHand.get(requestedCardIndex), currHand))) {
 
-                System.out.print("Not a valid card. Try again: ");
+                if (requestedCardIndex == -1) {
+                    System.out.println("Card not in hand. Try again: ");
+                } else if (!canBePlayed(currHand.get(requestedCardIndex), currHand)) {
+                    System.out.println("Card cannot be played. Try again: ");
+                }
                 requestedCard = userInput.nextLine();
 
                 requestedCardIndex = checkHandForCard(requestedCard, currHand);
@@ -231,20 +235,37 @@ public class Game {
     }
 
     public void botMove() {
-        ListIterator<Card> it = hands[currPlayer].listIterator();
+
+        LinkedList<Card> currHand = hands[currPlayer];
+
+        ListIterator<Card> it = currHand.listIterator();
 
         while (it.hasNext()) {
             Card c = it.next();
-            if (canBePlayed(c, hands[currPlayer])) {
+            if (canBePlayed(c, currHand)) {
                 if (c.getValue().equalsIgnoreCase("+4") || c.getValue().equalsIgnoreCase("Wild")) {
-                    c.setColor(getMostColor(hands[currPlayer]));
+                    c.setColor(getMostColor(currHand));
                 }
-                c.play(this);
-                discard(it.previousIndex());
+                System.out.println("Bot Played: " + c);
+                discard(it.previousIndex()).play(this);
                 return;
             }
         }
+
+        System.out.println("Bot Draws a card.");
         dealCard(1);
+
+        Card lastCard = currHand.getLast();
+
+        if (canBePlayed(lastCard, currHand)) {
+            if (lastCard.getValue().equalsIgnoreCase("+4") || lastCard.getValue().equalsIgnoreCase("Wild")) {
+                lastCard.setColor(getMostColor(currHand));
+            }
+            System.out.println("Bot Plays: " + currHand.getLast().toString());
+            discard(currHand.size()-1).play(this);
+        } else {
+            changeCurrPlayer(getTurnDirection());
+        }
     }
 
     public String getMostColor(LinkedList<Card> hand) {
@@ -290,7 +311,7 @@ public class Game {
         // Checks if +4 card is the only viable option.
         if (card.getValue().contains("+4")) {
             if (canDrawFour(hand)) {
-                return true;
+                    return true;
             }
             return false;
         }
@@ -336,10 +357,12 @@ public class Game {
             String cardString = hand.get(i).toString();
 
             // Remove None Color.
-            cardString = cardString.replace("None", "");
+            cardString = cardString.replace("None ", "");
 
             // Remove Excess Spacing.
             cardString = cardString.strip();
+
+            System.out.printf("Card Entered: %s / Hand Card: %s\n", card, cardString);
 
             if (card.equalsIgnoreCase(cardString)) {
                 return i;

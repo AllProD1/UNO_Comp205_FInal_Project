@@ -18,7 +18,9 @@ public class Wild extends Card{
      */
     @Override
     public void play(Game game) {
-        super.setColor(game.getUserColor());
+        if (getColor().equalsIgnoreCase("None")) {
+            super.setColor(game.getUserColor());
+        }
         game.changeCurrPlayer(game.getTurnDirection());
         // Use Game.getUserColor to change the color and move to next turn
     }
