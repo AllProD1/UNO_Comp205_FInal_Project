@@ -64,6 +64,10 @@ public class Deck {
         }
     }
 
+    /***
+     * Creates a deck with the given cards and resets and user altered properties
+     * @param cardsToAdd A collection of cards to be included in the deck.
+     */
     public Deck(Collection<Card> cardsToAdd) {
         for (Card c : cardsToAdd) {
             deck.add(c.getCopy());
@@ -101,8 +105,7 @@ public class Deck {
         return draw;
     }
 
-    public boolean isEmpty() { return deck.isEmpty(); }
-
+    // Returns the number of cards in the deck.
     public int getDeckCount() { return deck.size(); }
 
     /**
@@ -113,6 +116,10 @@ public class Deck {
         return  deck.peek();
     }
 
+    /***
+     * Used for debugging
+     * @return Each card of the deck printed on their own line.
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

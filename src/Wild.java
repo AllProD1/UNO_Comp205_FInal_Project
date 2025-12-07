@@ -4,9 +4,13 @@ public class Wild extends Card{
      * Creates a new Wild Card with color "None"
      */
     public Wild() {
-        super("None");
+        super();
     }
 
+    /***
+     *
+     * @return the id of the card used to determine if it is equal to another card.
+     */
     @Override
     public String getValue() {
         return "Wild";
@@ -25,6 +29,10 @@ public class Wild extends Card{
         // Use Game.getUserColor to change the color and move to next turn
     }
 
+    /***
+     * Creates a new wild card.
+     * @return A new wild card.
+     */
     public Card getCopy() {
         return new Wild();
     }

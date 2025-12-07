@@ -11,6 +11,10 @@ public class Reverse extends Card {
         super(color);
     }
 
+    /***
+     *
+     * @return the id of the card used to determine if it is equal to another card.
+     */
     @Override
     public String getValue() {
         return "Reverse";
@@ -31,6 +35,10 @@ public class Reverse extends Card {
         }
     }
 
+    /***
+     * Creates a deep copy of the current reverse card.
+     * @return A new deep copy of the reverse card.
+     */
     public Card getCopy() {
         return new Reverse(getColor());
     }

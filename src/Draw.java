@@ -25,9 +25,13 @@ public class Draw extends Card{
         this.drawAmount = drawAmount;
     }
 
-    // Gets drawAmount.
+    /***
+     *
+     * @return the id of the card used to determine if it is equal to another card.
+     */
     @Override
     public String getValue() {
+        // Returns '+drawAmount' i.e. '+2', '+4'
         return String.format("+%d",drawAmount);
     }
 
@@ -60,6 +64,10 @@ public class Draw extends Card{
 
     }
 
+    /***
+     * Returns a deep copy of the draw card and removes the color if it is a +4
+     * @return A new deep copy of the draw card.
+     */
     public Card getCopy() {
         if (drawAmount == 4) { // Removes Color of draw four cards copied.
             return new  Draw(drawAmount);

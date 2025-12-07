@@ -56,10 +56,15 @@ public abstract class Card {
         return false;
     }
 
+    /***
+     *
+     * @return A String representation of the card including its color and value.
+     */
     @Override
     public String toString() {
         return String.format("%s %s", color, getValue());
     }
 
+    // Abstract method for deep copies of cards.
     public abstract Card getCopy();
 }

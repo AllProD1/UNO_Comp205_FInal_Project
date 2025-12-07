@@ -11,6 +11,10 @@ public class Skip extends Card {
         super(color);
     }
 
+    /***
+     *
+     * @return the id of the card used to determine if it is equal to another card.
+     */
     @Override
     public String getValue() {
         return "Skip";
@@ -26,6 +30,10 @@ public class Skip extends Card {
         game.changeCurrPlayer(2 * game.getTurnDirection());
     }
 
+    /***
+     * Creates a deep copy of the current skip card.
+     * @return A new deep copy of the skip card.
+     */
     public Card getCopy() {
         return new Skip(getColor());
     }

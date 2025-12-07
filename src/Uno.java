@@ -26,23 +26,26 @@ public class Uno {
             }
         } while (numRealPlayers < 1 || numRealPlayers > 10);
 
-        do {
-            System.out.printf("How many BOTS do you want to play? (%d-%d): ", Math.max(0, 2-numRealPlayers), 10-numRealPlayers);
-            try {
-                numBots = Integer.parseInt(userInput.nextLine());
+        if (10-numRealPlayers > 0) {
 
-                if (numBots < 0) {
-                    System.out.println("Number too small.");
-                } else if (numBots > 10-numRealPlayers) {
-                    System.out.println("Number to big.");
-                } else if (numRealPlayers == 1 && numBots == 0) {
-                    System.out.println("Need more players.");
+            do {
+                System.out.printf("How many BOTS do you want to play? (%d-%d): ", Math.max(0, 2 - numRealPlayers), 10 - numRealPlayers);
+                try {
+                    numBots = Integer.parseInt(userInput.nextLine());
+
+                    if (numBots < 0) {
+                        System.out.println("Number too small.");
+                    } else if (numBots > 10 - numRealPlayers) {
+                        System.out.println("Number to big.");
+                    } else if (numRealPlayers == 1 && numBots == 0) {
+                        System.out.println("Need more players.");
+                    }
+
+                } catch (NumberFormatException nfe) {
+                    System.out.println("Not a valid number.");
                 }
-
-            } catch (NumberFormatException nfe) {
-                System.out.println("Not a valid number.");
-            }
-        } while (numBots < 0 || numBots > 10-numRealPlayers || (numBots == 0 && numRealPlayers == 1));
+            } while (numBots < 0 || numBots > 10 - numRealPlayers || (numBots == 0 && numRealPlayers == 1));
+        }
 
 
 
@@ -55,33 +58,39 @@ public class Uno {
                 gameMode = userInput.nextLine();
             }
 
+            Game uno;
+
             // if else for creating uno game or house rules game
             if(gameMode.equalsIgnoreCase("Uno")) {
-                Game uno = new Game(numRealPlayers + numBots, numRealPlayers);
-                uno.StartGame();
-
-                while (uno.hasWon() == -1) {
-                    uno.playTurn();
-                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"); // Hides last players hand.
-                    System.out.printf("Player %d's turn: Enter any key to view your hand.", uno.getCurrPlayer() + 1);
-                    userInput.nextLine();
-                }
-
-                System.out.printf("\n\nPlayer %d won!", uno.hasWon() + 1);
-
+                uno = new Game(numRealPlayers + numBots, numRealPlayers);
             } else {
-                HouseRules customUno = new HouseRules(numRealPlayers + numBots, numRealPlayers);
-                customUno.StartGame();
+                uno = new HouseRules(numRealPlayers + numBots, numRealPlayers);
+            }
 
-                while (customUno.hasWon() == -1) {
-                    customUno.playTurn();
-                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"); // Hides last players hand.
-                    System.out.printf("Player %d's turn: Enter any key to view your hand.", customUno.getCurrPlayer() + 1);
-                    userInput.nextLine();
+            System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"); // Hides game setup
+
+            // Start game
+            uno.StartGame();
+
+            // Play Game
+            while (uno.hasWon() == -1) {
+
+                if (!uno.isBotTurn()) {
+                    System.out.printf("Player %d's turn: Enter 'next' to view your hand. ", uno.getCurrPlayer() + 1);
+                    String input = userInput.nextLine();
+                    while(!input.equalsIgnoreCase("next")) {
+                        System.out.print("Try Again: ");
+                        input= userInput.nextLine();
+                    }
                 }
 
-                System.out.printf("\n\nPlayer %d won!", customUno.hasWon() + 1);
+                uno.playTurn();
+
+                // Fix spacing so bot moves appear above next real player confirmation.
+                // Finish commenting Game
             }
+
+            System.out.printf("\n\nPlayer %d won!", uno.hasWon() + 1);
 
 
     }

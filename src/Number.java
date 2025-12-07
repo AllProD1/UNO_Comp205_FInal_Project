@@ -16,7 +16,10 @@ public class Number extends Card{
         this.num = num;
     }
 
-    // Gets num.
+    /***
+     *
+     * @return the id of the card used to determine if it is equal to another card.
+     */
     @Override
     public String getValue() {
         return num;
@@ -30,6 +33,10 @@ public class Number extends Card{
         game.changeCurrPlayer(game.getTurnDirection());
     }
 
+    /***
+     * Creates a deep copy of the current number card.
+     * @return A new deep copy of the number card.
+     */
     public Card getCopy() {
         return new Number(getColor(), num);
     }

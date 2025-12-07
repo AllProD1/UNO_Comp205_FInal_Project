@@ -1,3 +1,4 @@
+import java.sql.SQLOutput;
 import java.util.*;
 
 /**
@@ -19,8 +20,6 @@ public class Game {
     // int to keep track of which players turn it is
     private int currPlayer;
 
-    private int botStart;
-
     // The direction the game moves. Only 1 or -1.
     private int turnDirection = 1;
 
@@ -30,6 +29,11 @@ public class Game {
     // used for reference in House Rules
     int numPlayers,numRealPlayers;
 
+    /***
+     * Creates a new game with numPlayers and initializes hand, discard pile, and deck.
+     * @param numPlayers The total number of players both real and bot
+     * @param numRealPlayers The total number of real players.
+     */
     public Game(int numPlayers, int numRealPlayers) {
         this.numPlayers = numPlayers;
         this.numRealPlayers = numRealPlayers;
@@ -45,17 +49,7 @@ public class Game {
             hands[i] = new LinkedList<>();
         }
 
-        this.botStart = numRealPlayers;
-
         gameDeck = new Deck();
-    }
-
-    // getters for House Rules
-    public int getNumPlayers(){
-        return numPlayers;
-    }
-    public int getNumRealPlayers(){
-        return numRealPlayers;
     }
 
     // Returns turnDirection
@@ -76,24 +70,12 @@ public class Game {
         currPlayer = ((currPlayer + amount) % hands.length + hands.length) % hands.length;
     }
 
+    // Gets the current player
     public int getCurrPlayer() {
         return currPlayer;
     }
 
-    // added for house rules
-    public int getBotStart(){
-        return botStart;
-    }
-
-    public Card getDiscardPile(){
-        return discardPile.peek();
-    }
-
-    public LinkedList<Card>[] getHands(){
-        return hands;
-    }
-
-
+    // Gets the number of players both bots and real.
     public int getPlayerCount(){ return hands.length; }
 
     /**
@@ -114,8 +96,6 @@ public class Game {
         } while(!isValidStart(discardPile.peek()));
 
         currPlayer = 0;
-
-        // User confirmation to start playing
     }
 
     /***
@@ -130,30 +110,52 @@ public class Game {
      */
     public void dealCard(int numToDraw, LinkedList<Card> hand) {
 
+        // Makes sure the deck has enough cards to draw.
         if (numToDraw > gameDeck.getDeckCount()) {
 
             int numRemainToDraw = numToDraw - gameDeck.getDeckCount();
 
+            // If deck does not contain enough cards to draw:
+            // Draw all remaining cards
             for(int i = 1; i <= gameDeck.getDeckCount();i++){
                 hand.add(gameDeck.draw());
             }
 
+            // Remove the top of the discard pile
             Card lastCard = discardPile.pop();
-            gameDeck = new Deck(discardPile);
+
+            // Create a new deck with the remaining discard pile
+            // If for some reason there are no cards left to be shuffled print error and make a new deck.
+            // The above should only happen if every player just keeps drawing instead of playing any cards.
+            if (!discardPile.isEmpty()) {
+                gameDeck = new Deck(discardPile);
+            } else {
+                System.out.println("No cards were left to be shuffled: Creating new deck.");
+                gameDeck = new Deck();
+            }
             gameDeck.shuffle();
 
+            // Add the removed card from the discard pile back onto the discard pile.
             discardPile.add(lastCard);
 
+            // Finish drawing the necessary cards.
             for (int i = 0; i < numRemainToDraw; i++) {
                 hand.add(gameDeck.draw());
             }
+
         } else {
+            // If the deck contains enough cards to draw, draw that many cards.
             for (int i = 1; i <= numToDraw; i++) {
                 hand.add(gameDeck.draw());
             }
         }
     }
 
+    /***
+     * Prompts the user to pick a color for wild and wild +4 cards.
+     * Ensures the player enters a valid color and translates that color to the proper format.
+     * @return A formatted string color to be added to a card.
+     */
     public String getUserColor() {
         // Sets up options for colors.
         ArrayList<String> OPTIONS = new ArrayList<String>() {
@@ -178,11 +180,14 @@ public class Game {
         }
         while (!OPTIONS.contains(color));
 
-        // Returns fully spelt out color.
-        if (color.length() > 1) {
-            return color;
+        // Gets fully spelled out color.
+        if (color.length() == 1) {
+            color = OPTIONS.get(OPTIONS.indexOf(color)-1);
         }
-        return OPTIONS.get(OPTIONS.indexOf(color)-1);
+
+        // Capitalizes first letter
+        color = color.substring(0,1).toUpperCase() + color.substring(1);
+        return color;
 
     }
 
@@ -200,7 +205,7 @@ public class Game {
      */
     public void dealCard(int numToDraw) {
         dealCard(numToDraw, hands[currPlayer]);
-    }// we may not need this method
+    }
 
     /***
      * discard is the act of playing by a player removing the card from
@@ -220,102 +225,223 @@ public class Game {
      */
     public void playTurn() {
 
-        if (currPlayer >= botStart) {
+        if (isBotTurn()) {
             botMove();
         } else {
-
-            System.out.printf("\nTop Card: %s\n", discardPile.peek());
-
-            if (currPlayer == -1) {
-                System.out.println("");
-            }
-
-            LinkedList<Card> currHand = hands[currPlayer];
-
-            System.out.printf("\nPlayer %d's Hand:\n%s\n\n", currPlayer + 1, printHand(currHand));
-
-            System.out.print("Enter the card you want to play by typing color and number or type draw: ");
-            String requestedCard = userInput.nextLine().strip();
-
-            int requestedCardIndex = checkHandForCard(requestedCard, currHand);
-
-            while (!requestedCard.equalsIgnoreCase("draw") && (requestedCardIndex == -1 || !canBePlayed(currHand.get(requestedCardIndex), currHand))) {
-
-                if (requestedCardIndex == -1) {
-                    System.out.println("Card not in hand. Try again: ");
-                } else if (!canBePlayed(currHand.get(requestedCardIndex), currHand)) {
-                    System.out.println("Card cannot be played. Try again: ");
-                }
-                requestedCard = userInput.nextLine();
-
-                requestedCardIndex = checkHandForCard(requestedCard, currHand);
-            }
-
-            if (requestedCard.equalsIgnoreCase("draw")) {
-                dealCard(1);
-                if(canBePlayed(currHand.getLast(),currHand)){
-                    discard(currHand.size()-1).play(this);
-                }else {
-                    changeCurrPlayer(getTurnDirection());
-                }
-            } else {
-                discard(requestedCardIndex).play(this);
-            }
+            playerTurn();
         }
 
     }
 
+    /***
+     * Controls the flow of a real players turn.
+     */
+    public void playerTurn() {
+
+        // Prints the top card of the discard pile.
+        System.out.printf("\nTop Card: %s\n", discardPile.peek());
+
+        // Print Players hand.
+        System.out.printf("\nPlayer %d's Hand:\n%s\n\n", currPlayer + 1, printHand());
+
+        // Get User Input
+        String turnInput = getUserTurnInput();
+
+        // Handle User Input
+        if (turnInput.equalsIgnoreCase("draw")) {
+
+            userDraw();
+
+            // If drawn card can be played, play it.
+            if(canBePlayed(getCurrHand().getLast())){
+                userPlay(getCurrHand().size()-1);
+            } else {
+                changeCurrPlayer(getTurnDirection());
+            }
+
+        } else {
+
+            int cardIndex = checkHandForCard(turnInput);
+
+            userPlay(cardIndex);
+
+        }
+
+        System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"); // Hides player hand
+    }
+
+    // Deals a card to the current player.
+    public void userDraw() {
+        dealCard(1);
+    }
+
+    // Returns whether it is a bots turn.
+    public boolean isBotTurn() {
+        return currPlayer >= numRealPlayers;
+    };
+
+    // plays and discards the card at the index in current players hand.
+    public void userPlay(int cardIndex) {
+        discard(cardIndex).play(this);
+    }
+
+    /***
+     * Prompts the user for play input until valid input is received.
+     * @return the valid play instruction.
+     */
+    public String getUserTurnInput() {
+
+        System.out.print("Enter the card you want to play by typing color and number or type draw: ");
+        String requestedMove = userInput.nextLine().strip();
+
+        // Get Valid User Input
+        while (validPlayerInput(requestedMove)) {
+            requestedMove = userInput.nextLine().strip();
+        }
+
+        return requestedMove;
+    }
+
+    /***
+     * Checks if a player input is a valid option by either being a playable card from their hand or to draw.
+     * Prints out corresponding messages for incorrect input.
+     * @param userInput
+     * @return true if userInput will result in a valid action.
+     */
+    public boolean validPlayerInput(String userInput) {
+
+        // If the player doesn't draw check if the card is valid.
+        if (!userInput.equalsIgnoreCase("draw")) {
+
+            // Get Card index in hand or -1
+            int requestedCardIndex = checkHandForCard(userInput);
+
+            if (requestedCardIndex == -1) {
+                System.out.println("Card not in hand. Try again: ");
+                return true;
+            } else {
+
+                // Card must exist in the hand
+                Card requestedCard = getCurrHand().get(requestedCardIndex);
+
+                if (!canBePlayed(requestedCard)) {
+
+                    System.out.println("Card cannot be played. Try again: ");
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /***
+     * Controls the bots turn movement.
+     */
     public void botMove() {
 
-        LinkedList<Card> currHand = hands[currPlayer];
+        ListIterator<Card> it = getCurrHand().listIterator();
 
-        ListIterator<Card> it = currHand.listIterator();
-
+        // Iterates through bots hand
         while (it.hasNext()) {
+
             Card c = it.next();
-            if (canBePlayed(c, currHand)) {
-                if (c.getValue().equalsIgnoreCase("+4") || c.getValue().equalsIgnoreCase("Wild")) {
-                    c.setColor(getMostColor(currHand));
-                }
-                System.out.println("Bot Played: " + c);
+
+            // If the bot can play the card play it.
+            if (canBePlayed(c)) {
+
+                botHandleWild(c);
+
+                System.out.printf("Bot %d Played: %s\n", currPlayer+1, c);
                 discard(it.previousIndex()).play(this);
+
+                // Ends Turn
+                System.out.println("");
                 return;
             }
         }
 
-        System.out.println("Bot Draws a card.");
+        System.out.printf("Bot %d Draws a card.\n", currPlayer+1);
         dealCard(1);
 
-        Card lastCard = currHand.getLast();
+        Card lastCard = getCurrHand().getLast();
 
-        if (canBePlayed(lastCard, currHand)) {
-            if (lastCard.getValue().equalsIgnoreCase("+4") || lastCard.getValue().equalsIgnoreCase("Wild")) {
-                lastCard.setColor(getMostColor(currHand));
-            }
-            System.out.println("Bot Plays: " + currHand.getLast().toString());
-            discard(currHand.size()-1).play(this);
+        // If bot can play picked up card, it plays it.
+        if (canBePlayed(lastCard)) {
+
+            botHandleWild(lastCard);
+
+            System.out.printf("Bot %d Plays: %s\n", currPlayer+1, lastCard);
+            discard(getCurrHand().size()-1).play(this);
         } else {
             changeCurrPlayer(getTurnDirection());
         }
+
+        System.out.println("");
     }
 
-    public String getMostColor(LinkedList<Card> hand) {
-        TreeMap<String, Integer> colors = new TreeMap<>();
+    // Returns a reference to the LinkedList<Card> of the current player.
+    public LinkedList<Card> getCurrHand() {
+        return hands[currPlayer];
+    }
 
-        for (Card c : hand) {
-            if (colors.containsKey(c.getColor())) {
-                colors.put(c.getColor(), colors.get(c.getColor())+1);
+    /***
+     * Checks if the card being played by the bot is a wild or +4 and deals with the color change.
+     * @param c The card being played
+     */
+    public void botHandleWild(Card c) {
+        if (c.getValue().equalsIgnoreCase("+4") || c.getValue().equalsIgnoreCase("Wild")) {
+            c.setColor(getMostColor());
+        }
+    }
+
+    /***
+     * Used to make bots slightly more intelligent by changing getting color most common in their hand.
+     * @return the color the bot contains the most of.
+     */
+    public String getMostColor() {
+        HashMap<String, Integer> colors = new HashMap<>();
+
+        // Counts number of cards of each color in hand.
+        for (Card c : getCurrHand()) {
+
+            String cardColor = c.getColor();
+
+            // Ensures card has a usable color.
+            if (!cardColor.equalsIgnoreCase("None")) {
+                int count = colors.getOrDefault(colors.get(cardColor), 0);
+                colors.put(cardColor, count + 1);
             }
-            colors.put(c.getColor(), 1);
         }
 
-        return colors.firstKey();
+        // If the bot contains no colored cards add 1 red card.
+        if (colors.isEmpty()) {
+            colors.put("Red", 1);
+        }
+
+        TreeMap<Integer, String> orderedColors = new TreeMap<>();
+
+        // Sorts cards by number rather can color
+        for (String color: colors.keySet()) {
+            int count = colors.get(color);
+            orderedColors.put(count, color);
+        }
+
+        // Gets the number of the most used color
+        int firstOrderedKey = orderedColors.descendingKeySet().first();
+
+        // Returns most used color.
+        return orderedColors.get(firstOrderedKey);
     }
 
-    public String printHand(LinkedList<Card> hand) {
+    /***
+     * Creates a string that contains a formatted list of cards to display to the player.
+     * @return a string with each card in the hand on its own line.
+     */
+    public String printHand() {
         StringBuilder sb = new StringBuilder();
 
-        for (Card c : hand) {
+        for (Card c : getCurrHand()) {
             sb.append(c.toString().replace("None ", ""));
             sb.append("\n");
         }
@@ -337,11 +463,11 @@ public class Game {
      * @param card
      * @return if the given card can be played on the discard pile.
      */
-    public boolean canBePlayed(Card card, LinkedList<Card> hand) { // Can you play +4 with a wild in your hand?
+    public boolean canBePlayed(Card card) {
 
         // Checks if +4 card is the only viable option.
         if (card.getValue().contains("+4")) {
-            if (canDrawFour(hand)) {
+            if (canDrawFour(getCurrHand())) {
                     return true;
             }
             return false;
@@ -379,21 +505,18 @@ public class Game {
     /***
      * Finds if any the first matching Card in Hand with card.
      * @param card
-     * @param hand
      * @return Returns the index of the Card in hand with to same toString as card. Return -1 otherwise.
      */
-    public int checkHandForCard(String card, LinkedList<Card> hand) {
-        for (int i = 0; i < hand.size(); i++) {
+    public int checkHandForCard(String card) {
+        for (int i = 0; i < getCurrHand().size(); i++) {
 
-            String cardString = hand.get(i).toString();
+            String cardString = getCurrHand().get(i).toString();
 
             // Remove None Color.
             cardString = cardString.replace("None ", "");
 
             // Remove Excess Spacing.
             cardString = cardString.strip();
-
-            System.out.printf("Card Entered: %s / Hand Card: %s\n", card, cardString);
 
             if (card.equalsIgnoreCase(cardString)) {
                 return i;
@@ -402,9 +525,13 @@ public class Game {
         return -1;
     }
 
+    /***
+     * Checks if any player has no cards remaining in their hand.
+     * @return the player num of the winner or -1 if no winner exists yet.
+     */
     public int hasWon() {
         for (int i = 0; i < hands.length; i++) {
-            if (hands[i].size() == 0) {
+            if (hands[i].isEmpty()) {
                 return i;
             }
         }
