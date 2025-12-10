@@ -7,8 +7,8 @@ public class Uno {
 
         Scanner userInput = new Scanner(System.in);
 
-        int numRealPlayers = -1;
-        int numBots = -1;
+        int numRealPlayers = 1;
+        int numBots = 0;
 
         // Get number of REAL players
         do {

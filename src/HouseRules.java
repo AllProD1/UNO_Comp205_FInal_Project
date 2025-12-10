@@ -1,3 +1,4 @@
+import java.util.InputMismatchException;
 import java.util.LinkedList;
 
 public class HouseRules extends Game {
@@ -14,6 +15,30 @@ public class HouseRules extends Game {
         while (!canBePlayed(getCurrHand().getLast())) { // added this while loop for drawing until playable needs testing
             dealCard(1);
         }
+    }
+
+    public void swapHands() {
+
+        int newHand = -1;
+
+        // Gets a valid hand
+        do {
+            System.out.printf("Enter the player you want to trade hands with? 1-%d\n", getPlayerCount());
+
+            try  {
+                newHand = Integer.parseInt(userInput.nextLine());
+            } catch (NumberFormatException nfe) {
+                System.out.printf("Please enter valid integer from 1-%d.\n", getPlayerCount());
+            }
+        } while (newHand <= 0 || newHand > getPlayerCount() || newHand == getCurrPlayer()-1);
+
+        newHand--;
+
+        // currentHand hand becomes newHand and newHand becomes currentHand
+        LinkedList<Card>[] allHands = getHands();
+        LinkedList<Card> temp = allHands[getCurrPlayer()];
+        allHands[getCurrPlayer()] = allHands[newHand];
+        allHands[newHand] = temp;
     }
 
 // this is for trading hands
@@ -37,6 +62,11 @@ public class HouseRules extends Game {
             // If drawn card can be played, play it.
             if(canBePlayed(getCurrHand().getLast())){
                 System.out.printf("Drew playable card. Now playing %s.\n", getCurrHand().getLast());
+
+                if (getCurrHand().getLast().getValue().equalsIgnoreCase("0")) {
+                    swapHands();
+                }
+
                 userPlay(getCurrHand().size()-1);
 
                 // Have player confirm they played the drawn card.
@@ -53,28 +83,10 @@ public class HouseRules extends Game {
         } else {
 
             int cardIndex = checkHandForCard(turnInput);
-            if(turnInput.equalsIgnoreCase("Red 0")|| turnInput.equalsIgnoreCase("Blue 0")||
-                    turnInput.equalsIgnoreCase("Green 0")|| turnInput.equalsIgnoreCase("Yellow 0")){
-
-                    System.out.println("Enter the player you want to trade hands with?");
-                    int newHand = userInput.nextInt();
-                    while(newHand < 0 || newHand > getPlayerCount() || newHand == getCurrPlayer() ){
-                        System.out.println("Invalid Player Number Try Again");
-                        newHand = userInput.nextInt();
-
-                        LinkedList<Card>[] allHands = getHands();
-                        LinkedList<Card> temp = allHands[getCurrPlayer()];
-                        allHands[getCurrPlayer()] = allHands[newHand];
-                        allHands[newHand] = temp;
-                    }
-                    // currentHand hand becomes newHand and newHand becomes currentHand
-
-
-                    userPlay(cardIndex);
-
-            }else {
-                userPlay(cardIndex);
+            if (getCurrHand().get(cardIndex).getValue().equalsIgnoreCase("0")) {
+                swapHands();
             }
+            userPlay(cardIndex);
         }
 
         System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"); // Hides player hand
