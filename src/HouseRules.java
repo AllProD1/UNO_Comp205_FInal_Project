@@ -21,6 +21,8 @@ public class HouseRules extends Game {
 
     public void swapHands() {
 
+        int lastPlayer = ((getCurrPlayer() - getTurnDirection()) % getPlayerCount() - getPlayerCount()) % getPlayerCount();
+
         int newHand = -1;
 
         // Gets a valid hand
@@ -34,12 +36,12 @@ public class HouseRules extends Game {
             }
         } while (newHand <= 0 || newHand > getPlayerCount() || newHand == getCurrPlayer()-1);
 
-        newHand--;
+        newHand --;
 
         // currentHand hand becomes newHand and newHand becomes currentHand
         LinkedList<Card>[] allHands = getHands();
-        LinkedList<Card> temp = allHands[getCurrPlayer()];
-        allHands[getCurrPlayer()] = allHands[newHand];
+        LinkedList<Card> temp = allHands[lastPlayer];
+        allHands[lastPlayer] = allHands[newHand];
         allHands[newHand] = temp;
     }
 
@@ -66,10 +68,11 @@ public class HouseRules extends Game {
                 System.out.printf("Drew playable card. Now playing %s.\n", getCurrHand().getLast());
 
                 if (getCurrHand().getLast().getValue().equalsIgnoreCase("0")) {
+                    userPlay(getCurrHand().size()-1);
                     swapHands();
+                } else {
+                    userPlay(getCurrHand().size()-1);
                 }
-
-                userPlay(getCurrHand().size()-1);
 
                 // Have player confirm they played the drawn card.
                 System.out.println("Enter 'next' to confirm.");
@@ -86,37 +89,73 @@ public class HouseRules extends Game {
 
             int cardIndex = checkHandForCard(turnInput);
             if (getCurrHand().get(cardIndex).getValue().equalsIgnoreCase("0")) {
+                userPlay(cardIndex);
                 swapHands();
+            } else {
+                userPlay(cardIndex);
             }
-            userPlay(cardIndex);
         }
 
         System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"); // Hides player hand
     }
 
+
+    /***
+     * Controls the bots turn movement.
+     */
     @Override
-    public void botHandleWild(Card c) {
-        if (c.getValue().equalsIgnoreCase("+4") || c.getValue().equalsIgnoreCase("Wild")) {
-            c.setColor(getMostColor());
-        }else if (c.getValue().equalsIgnoreCase("0")){
-        System.out.println("0 Was played");
+    public void botMove() {
 
-            Random randomHand = new Random(getPlayerCount());
-            int botRandom = randomHand.nextInt();
+        ListIterator<Card> it = getCurrHand().listIterator();
 
-            while(botRandom < 0 || botRandom == getCurrPlayer() ) {
-                botRandom = randomHand.nextInt();
+        // Iterates through bots hand
+        while (it.hasNext()) {
+
+            Card c = it.next();
+
+            // If the bot can play the card play it.
+            if (canBePlayed(c)) {
+
+                botHandleWild(c);
+
+                System.out.printf("Bot %d Played: %s\n", getCurrPlayer()+1, c);
+
+                if (c.getValue().equalsIgnoreCase("0")) {
+                    discard(it.previousIndex()).play(this);
+                    swapHands();
+                } else {
+                    discard(it.previousIndex()).play(this);
+                }
+
+                // Ends Turn
+                System.out.println("");
+                return;
             }
-
-            LinkedList<Card>[] allHands = getHands();
-            System.out.println(allHands);
-            LinkedList<Card> temp = allHands[getCurrPlayer()];
-            System.out.println(temp);
-            allHands[getCurrPlayer()] = allHands[botRandom];
-            System.out.println(allHands[getCurrPlayer()]);
-            allHands[botRandom] = temp;
-            System.out.println(allHands[botRandom]);
-
         }
+
+        System.out.printf("Bot %d Draws a card.\n", getCurrPlayer()+1);
+        dealCard(1);
+
+        Card lastCard = getCurrHand().getLast();
+
+        // If bot can play picked up card, it plays it.
+        if (canBePlayed(lastCard)) {
+
+            botHandleWild(lastCard);
+
+            System.out.printf("Bot %d Plays: %s\n", getCurrPlayer()+1, lastCard);
+            if (lastCard.getValue().equalsIgnoreCase("0")) {
+                discard(getCurrHand().size()-1).play(this);
+                swapHands();
+            } else {
+                discard(getCurrHand().size()-1).play(this);
+            }
+        } else {
+            changeCurrPlayer(getTurnDirection());
+        }
+
+        System.out.println("");
     }
 }
+
+
