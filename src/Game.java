@@ -52,6 +52,11 @@ public class Game {
         gameDeck = new Deck();
     }
 
+    // for house rules access
+    public LinkedList<Card>[] getHands() {
+        return hands;
+    }
+
     // Returns turnDirection
     public int getTurnDirection() {
         return turnDirection;
@@ -231,6 +236,11 @@ public class Game {
             playerTurn();
         }
 
+    }
+
+// added for House rules play turn override
+    public Stack<Card> getDiscardPile() {
+        return discardPile;
     }
 
     /***
