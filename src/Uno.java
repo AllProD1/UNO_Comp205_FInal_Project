@@ -10,6 +10,7 @@ public class Uno {
         int numRealPlayers = -1;
         int numBots = -1;
 
+        // Get number of REAL players
         do {
             System.out.print("How many REAL players do you want to play? (1-10): ");
             try {
@@ -26,8 +27,8 @@ public class Uno {
             }
         } while (numRealPlayers < 1 || numRealPlayers > 10);
 
+        // Get number of bots
         if (10-numRealPlayers > 0) {
-
             do {
                 System.out.printf("How many BOTS do you want to play? (%d-%d): ", Math.max(0, 2 - numRealPlayers), 10 - numRealPlayers);
                 try {
@@ -85,9 +86,6 @@ public class Uno {
                 }
 
                 uno.playTurn();
-
-                // Fix spacing so bot moves appear above next real player confirmation.
-                // Finish commenting Game
             }
 
             System.out.printf("\n\nPlayer %d won!", uno.hasWon() + 1);

@@ -254,7 +254,16 @@ public class Game {
 
             // If drawn card can be played, play it.
             if(canBePlayed(getCurrHand().getLast())){
+                System.out.printf("Drew playable card. Now playing %s.\n", getCurrHand().getLast());
                 userPlay(getCurrHand().size()-1);
+
+                // Have player confirm they played the drawn card.
+                System.out.println("Enter 'next' to confirm.");
+                String input = userInput.nextLine();
+                while(!input.equalsIgnoreCase("next")) {
+                    System.out.print("Try Again: ");
+                    input= userInput.nextLine();
+                }
             } else {
                 changeCurrPlayer(getTurnDirection());
             }
