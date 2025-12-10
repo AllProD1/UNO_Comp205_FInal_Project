@@ -147,7 +147,7 @@ public class HouseRules extends Game {
         }
 
         System.out.printf("Bot %d Draws a card.\n", getCurrPlayer()+1);
-        dealCard(1);
+        userDraw();
 
         Card lastCard = getCurrHand().getLast();
 
