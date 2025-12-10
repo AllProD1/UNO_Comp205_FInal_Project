@@ -19,10 +19,7 @@ public class HouseRules extends Game {
         }
     }
 
-    public void swapHands() {
-
-        int lastPlayer = ((getCurrPlayer() - getTurnDirection()) % getPlayerCount() - getPlayerCount()) % getPlayerCount();
-
+    public void playerSwap() {
         int newHand = -1;
 
         // Gets a valid hand
@@ -38,11 +35,18 @@ public class HouseRules extends Game {
 
         newHand --;
 
+        swapHands(newHand);
+    }
+
+    public void swapHands(int toSwap) {
+
+        int lastPlayer = ((getCurrPlayer() - getTurnDirection()) % getPlayerCount() + getPlayerCount()) % getPlayerCount();
+
         // currentHand hand becomes newHand and newHand becomes currentHand
         LinkedList<Card>[] allHands = getHands();
         LinkedList<Card> temp = allHands[lastPlayer];
-        allHands[lastPlayer] = allHands[newHand];
-        allHands[newHand] = temp;
+        allHands[lastPlayer] = allHands[toSwap];
+        allHands[toSwap] = temp;
     }
 
 // this is for trading hands
@@ -69,7 +73,7 @@ public class HouseRules extends Game {
 
                 if (getCurrHand().getLast().getValue().equalsIgnoreCase("0")) {
                     userPlay(getCurrHand().size()-1);
-                    swapHands();
+                    playerSwap();
                 } else {
                     userPlay(getCurrHand().size()-1);
                 }
@@ -90,7 +94,7 @@ public class HouseRules extends Game {
             int cardIndex = checkHandForCard(turnInput);
             if (getCurrHand().get(cardIndex).getValue().equalsIgnoreCase("0")) {
                 userPlay(cardIndex);
-                swapHands();
+                playerSwap();
             } else {
                 userPlay(cardIndex);
             }
@@ -121,8 +125,17 @@ public class HouseRules extends Game {
                 System.out.printf("Bot %d Played: %s\n", getCurrPlayer()+1, c);
 
                 if (c.getValue().equalsIgnoreCase("0")) {
+
+                    Random randomHand = new Random();
+                    int botRandom = randomHand.nextInt(getPlayerCount());
+
+                    while(botRandom < 0 || botRandom == getCurrPlayer() ) {
+                        botRandom = randomHand.nextInt(getPlayerCount());
+                    }
+
+
                     discard(it.previousIndex()).play(this);
-                    swapHands();
+                    swapHands(botRandom);
                 } else {
                     discard(it.previousIndex()).play(this);
                 }
@@ -145,8 +158,18 @@ public class HouseRules extends Game {
 
             System.out.printf("Bot %d Plays: %s\n", getCurrPlayer()+1, lastCard);
             if (lastCard.getValue().equalsIgnoreCase("0")) {
+
+                Random randomHand = new Random();
+                int botRandom = randomHand.nextInt(getPlayerCount());
+
+                while(botRandom < 0 || botRandom == getCurrPlayer() ) {
+                    botRandom = randomHand.nextInt(getPlayerCount());
+                }
+
+                System.out.println("Swapped hands with player " + randomHand);
+
                 discard(getCurrHand().size()-1).play(this);
-                swapHands();
+                swapHands(botRandom);
             } else {
                 discard(getCurrHand().size()-1).play(this);
             }
