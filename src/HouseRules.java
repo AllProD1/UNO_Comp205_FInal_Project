@@ -82,14 +82,18 @@ public class HouseRules extends Game {
 
     @Override
     public void botHandleWild(Card c) {
-        super.botHandleWild (c);
-        if (c.getValue().equalsIgnoreCase("Red 0")|| c.getValue().equalsIgnoreCase("Blue 0")||
-                c.getValue().equalsIgnoreCase("Green 0")|| c.getValue().equalsIgnoreCase("Yellow 0")) {
+        if (c.getValue().equalsIgnoreCase("+4") || c.getValue().equalsIgnoreCase("Wild")) {
+            c.setColor(getMostColor());
+        }else if (c.getValue().equalsIgnoreCase("0")){
+        System.out.println("0 Was played");
+
             Random randomHand = new Random(getPlayerCount());
             int botRandom = randomHand.nextInt();
+
             while(botRandom < 0 || botRandom == getCurrPlayer() ) {
                 botRandom = randomHand.nextInt();
             }
+
             LinkedList<Card>[] allHands = getHands();
             System.out.println(allHands);
             LinkedList<Card> temp = allHands[getCurrPlayer()];
