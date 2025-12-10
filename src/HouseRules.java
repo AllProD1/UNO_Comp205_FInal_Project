@@ -1,5 +1,7 @@
 import java.util.InputMismatchException;
 import java.util.LinkedList;
+import java.util.ListIterator;
+import java.util.Random;
 
 public class HouseRules extends Game {
 
@@ -90,5 +92,31 @@ public class HouseRules extends Game {
         }
 
         System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"); // Hides player hand
+    }
+
+    @Override
+    public void botHandleWild(Card c) {
+        if (c.getValue().equalsIgnoreCase("+4") || c.getValue().equalsIgnoreCase("Wild")) {
+            c.setColor(getMostColor());
+        }else if (c.getValue().equalsIgnoreCase("0")){
+        System.out.println("0 Was played");
+
+            Random randomHand = new Random(getPlayerCount());
+            int botRandom = randomHand.nextInt();
+
+            while(botRandom < 0 || botRandom == getCurrPlayer() ) {
+                botRandom = randomHand.nextInt();
+            }
+
+            LinkedList<Card>[] allHands = getHands();
+            System.out.println(allHands);
+            LinkedList<Card> temp = allHands[getCurrPlayer()];
+            System.out.println(temp);
+            allHands[getCurrPlayer()] = allHands[botRandom];
+            System.out.println(allHands[getCurrPlayer()]);
+            allHands[botRandom] = temp;
+            System.out.println(allHands[botRandom]);
+
+        }
     }
 }

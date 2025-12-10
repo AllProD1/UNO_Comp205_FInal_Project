@@ -27,7 +27,7 @@ public class Game {
     Scanner userInput = new Scanner(System.in);
 
     // used for reference in House Rules
-    int numPlayers,numRealPlayers;
+    private int numPlayers,numRealPlayers;
 
     /***
      * Creates a new game with numPlayers and initializes hand, discard pile, and deck.
