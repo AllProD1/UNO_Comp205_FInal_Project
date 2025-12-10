@@ -16,8 +16,7 @@ public class HouseRules extends Game {
         }
     }
 
-    // needs to override stack draw two
-
+// this is for trading hands
     @Override
     public void playerTurn() {
 
@@ -50,12 +49,14 @@ public class HouseRules extends Game {
 
                     System.out.println("Enter the player you want to trade hands with?");
                     int newHand = userInput.nextInt();
-                    while(newHand < 0 && newHand > getPlayerCount()){
+                    while(newHand < 0 || newHand > getPlayerCount() || newHand == getCurrPlayer() ){
                         System.out.println("Invalid Player Number Try Again");
                         newHand = userInput.nextInt();
-                        if(newHand > 0 && newHand < getPlayerCount()){
-                            break;
-                        }
+
+                        LinkedList<Card>[] allHands = getHands();
+                        LinkedList<Card> temp = allHands[getCurrPlayer()];
+                        allHands[getCurrPlayer()] = allHands[newHand];
+                        allHands[newHand] = temp;
                     }
                     // currentHand hand becomes newHand and newHand becomes currentHand
 
