@@ -1,4 +1,3 @@
-import java.util.InputMismatchException;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Random;
@@ -45,6 +44,7 @@ public class HouseRules extends Game {
         // currentHand hand becomes newHand and newHand becomes currentHand
         LinkedList<Card>[] allHands = getHands();
         LinkedList<Card> temp = allHands[lastPlayer];
+
         allHands[lastPlayer] = allHands[toSwap];
         allHands[toSwap] = temp;
     }
@@ -133,6 +133,7 @@ public class HouseRules extends Game {
                         botRandom = randomHand.nextInt(getPlayerCount());
                     }
 
+                    System.out.println("Swapped hands with player " + botRandom);
 
                     discard(it.previousIndex()).play(this);
                     swapHands(botRandom);
@@ -147,7 +148,7 @@ public class HouseRules extends Game {
         }
 
         System.out.printf("Bot %d Draws a card.\n", getCurrPlayer()+1);
-        dealCard(1);
+        userDraw();
 
         Card lastCard = getCurrHand().getLast();
 
@@ -166,7 +167,7 @@ public class HouseRules extends Game {
                     botRandom = randomHand.nextInt(getPlayerCount());
                 }
 
-                System.out.println("Swapped hands with player " + randomHand);
+                System.out.println("Swapped hands with player " + botRandom);
 
                 discard(getCurrHand().size()-1).play(this);
                 swapHands(botRandom);
