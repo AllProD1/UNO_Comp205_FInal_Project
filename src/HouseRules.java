@@ -1,4 +1,6 @@
 import java.util.LinkedList;
+import java.util.ListIterator;
+import java.util.Random;
 
 public class HouseRules extends Game {
 
@@ -56,19 +58,17 @@ public class HouseRules extends Game {
             if(turnInput.equalsIgnoreCase("Red 0")|| turnInput.equalsIgnoreCase("Blue 0")||
                     turnInput.equalsIgnoreCase("Green 0")|| turnInput.equalsIgnoreCase("Yellow 0")){
 
-                    System.out.println("Enter the player you want to trade hands with?");
-                    int newHand = userInput.nextInt();
-                    while(newHand < 0 || newHand > getPlayerCount() || newHand == getCurrPlayer() ){
+                    System.out.println("Enter the player you want to trade hands with by typing number i.e. '1' ?");
+                    int newHand = userInput.nextInt()-1;
+                    while(newHand < 0 || newHand > getPlayerCount() || newHand == getCurrPlayer() ) {
                         System.out.println("Invalid Player Number Try Again");
-                        newHand = userInput.nextInt();
-
+                        newHand = userInput.nextInt()-1;
+                    }
+                // currentHand hand becomes newHand and newHand becomes currentHand
                         LinkedList<Card>[] allHands = getHands();
                         LinkedList<Card> temp = allHands[getCurrPlayer()];
                         allHands[getCurrPlayer()] = allHands[newHand];
                         allHands[newHand] = temp;
-                    }
-                    // currentHand hand becomes newHand and newHand becomes currentHand
-
 
                     userPlay(cardIndex);
 
@@ -78,5 +78,27 @@ public class HouseRules extends Game {
         }
 
         System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"); // Hides player hand
+    }
+
+    @Override
+    public void botHandleWild(Card c) {
+        super.botHandleWild (c);
+        if (c.getValue().equalsIgnoreCase("Red 0")|| c.getValue().equalsIgnoreCase("Blue 0")||
+                c.getValue().equalsIgnoreCase("Green 0")|| c.getValue().equalsIgnoreCase("Yellow 0")) {
+            Random randomHand = new Random(getPlayerCount());
+            int botRandom = randomHand.nextInt();
+            while(botRandom < 0 || botRandom == getCurrPlayer() ) {
+                botRandom = randomHand.nextInt();
+            }
+            LinkedList<Card>[] allHands = getHands();
+            System.out.println(allHands);
+            LinkedList<Card> temp = allHands[getCurrPlayer()];
+            System.out.println(temp);
+            allHands[getCurrPlayer()] = allHands[botRandom];
+            System.out.println(allHands[getCurrPlayer()]);
+            allHands[botRandom] = temp;
+            System.out.println(allHands[botRandom]);
+
+        }
     }
 }
